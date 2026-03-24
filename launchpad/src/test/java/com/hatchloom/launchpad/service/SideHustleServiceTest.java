@@ -1,5 +1,23 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.request.CreateSideHustleRequest;
 import com.hatchloom.launchpad.dto.response.SideHustleResponse;
 import com.hatchloom.launchpad.factory.SideHustleFactoryProvider;
@@ -9,28 +27,22 @@ import com.hatchloom.launchpad.model.enums.SideHustleStatus;
 import com.hatchloom.launchpad.repository.BusinessModelCanvasRepository;
 import com.hatchloom.launchpad.repository.SideHustleRepository;
 import com.hatchloom.launchpad.repository.TeamRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
- * TC-Q2-001 — Create SideHustle (Factory Method)
+ * TC-Q2-001 - Create SideHustle (Factory Method)
  *
- * <p>Requirements Coverage: HL-SideHustle-Created-Success</p>
+ * <p>
+ * Requirements Coverage: HL-SideHustle-Created-Success
+ * </p>
  *
- * <p>Verifies that {@link SideHustleService#createSideHustle(CreateSideHustleRequest)} uses
- * the Factory Method pattern to select the correct factory based on the {@code type} field,
- * initialises the domain fields correctly, and auto-creates an empty BMC and Team.</p>
+ * <p>
+ * Verifies that
+ * {@link SideHustleService#createSideHustle(CreateSideHustleRequest)} uses
+ * the Factory Method pattern to select the correct factory based on the
+ * {@code type} field,
+ * initialises the domain fields correctly, and auto-creates an empty BMC and
+ * Team.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class SideHustleServiceTest {
@@ -50,8 +62,10 @@ class SideHustleServiceTest {
     private SideHustleService sideHustleService;
 
     /**
-     * TC-Q2-001 main path: creates an IN_THE_LAB SideHustle, asserts the Factory Method
-     * selects {@code InTheLabSideHustleFactory}, and verifies BMC + Team auto-creation.
+     * TC-Q2-001 main path: creates an IN_THE_LAB SideHustle, asserts the Factory
+     * Method
+     * selects {@code InTheLabSideHustleFactory}, and verifies BMC + Team
+     * auto-creation.
      */
     @Test
     void createSideHustle_inTheLab_usesFactoryAndSetsCorrectDomainFields() {
@@ -84,7 +98,8 @@ class SideHustleServiceTest {
     }
 
     /**
-     * Factory Method must select {@code LiveVentureSideHustleFactory} when type is LIVE_VENTURE.
+     * Factory Method must select {@code LiveVentureSideHustleFactory} when type is
+     * LIVE_VENTURE.
      */
     @Test
     void createSideHustle_liveVenture_setsLiveVentureStatus() {
@@ -109,7 +124,8 @@ class SideHustleServiceTest {
 
     /**
      * Creation must fail with 400 Bad Request when no Sandbox ID is provided.
-     * TC-Q2-001 Notes: "creation must fail with 400 if no valid Sandbox ID is provided."
+     * TC-Q2-001 Notes: "creation must fail with 400 if no valid Sandbox ID is
+     * provided."
      */
     @Test
     void createSideHustle_missingSandboxId_returns400() {

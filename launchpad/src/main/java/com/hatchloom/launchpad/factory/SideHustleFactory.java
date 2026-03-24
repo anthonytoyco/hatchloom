@@ -1,19 +1,25 @@
 package com.hatchloom.launchpad.factory;
 
-import com.hatchloom.launchpad.model.SideHustle;
-
 import java.util.UUID;
+
+import com.hatchloom.launchpad.model.SideHustle;
 
 /**
  * Abstract factory for creating {@link SideHustle} instances.
  *
- * <p>Concrete subclasses determine the correct {@code SideHustleStatus} and any
+ * <p>
+ * Concrete subclasses determine the correct {@code SideHustleStatus} and any
  * subtype-specific defaults. The factory decouples creation logic from the
- * service layer and satisfies the Open/Closed Principle — adding a new SideHustle
- * type requires only a new subclass and a mapping in {@link SideHustleFactoryProvider},
- * with no changes to existing code.</p>
+ * service layer and satisfies the Open/Closed Principle - adding a new
+ * SideHustle
+ * type requires only a new subclass and a mapping in
+ * {@link SideHustleFactoryProvider},
+ * with no changes to existing code.
+ * </p>
  *
- * <p>Design Doc reference: §6 Factory Method pattern, Test ID TC-Q2-001.</p>
+ * <p>
+ * Design Doc reference: §6 Factory Method pattern, Test ID TC-Q2-001.
+ * </p>
  */
 public abstract class SideHustleFactory {
 
@@ -28,6 +34,5 @@ public abstract class SideHustleFactory {
      * @return a new SideHustle entity ready for persistence
      */
     public abstract SideHustle createSideHustle(
-            String title, String description, UUID studentId, UUID sandboxId
-    );
+            String title, String description, UUID studentId, UUID sandboxId);
 }

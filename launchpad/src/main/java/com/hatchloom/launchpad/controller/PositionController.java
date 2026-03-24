@@ -1,25 +1,34 @@
 package com.hatchloom.launchpad.controller;
 
-import com.hatchloom.launchpad.dto.request.CreatePositionRequest;
-import com.hatchloom.launchpad.dto.request.UpdatePositionStatusRequest;
-import com.hatchloom.launchpad.dto.response.PositionResponse;
-import com.hatchloom.launchpad.service.PositionService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
+import com.hatchloom.launchpad.dto.request.CreatePositionRequest;
+import com.hatchloom.launchpad.dto.request.UpdatePositionStatusRequest;
+import com.hatchloom.launchpad.dto.response.PositionResponse;
+import com.hatchloom.launchpad.service.PositionService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 /**
  * Controller for Position lifecycle operations.
  *
- * <p>Also exposes the public Position Status Interface consumed by ConnectHub:
- * {@code GET /launchpad/positions/{positionId}/status}.</p>
+ * <p>
+ * Also exposes the public Position Status Interface consumed by ConnectHub:
+ * {@code GET /launchpad/positions/{positionId}/status}.
+ * </p>
  */
 @RestController
 @Tag(name = "Position")
@@ -33,8 +42,8 @@ public class PositionController {
 
     @PostMapping("/launchpad/sidehustles/{sideHustleId}/positions")
     public ResponseEntity<PositionResponse> createPosition(@PathVariable UUID sideHustleId,
-                                                            @Valid @RequestBody CreatePositionRequest request,
-                                                            @AuthenticationPrincipal Jwt jwt) {
+            @Valid @RequestBody CreatePositionRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
         UUID callerId = UUID.fromString(jwt.getSubject());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(positionService.createPosition(sideHustleId, request, callerId));
@@ -47,13 +56,13 @@ public class PositionController {
 
     @PutMapping("/launchpad/sidehustles/{sideHustleId}/positions/{positionId}/status")
     public ResponseEntity<PositionResponse> updatePositionStatus(@PathVariable UUID sideHustleId,
-                                                                   @PathVariable UUID positionId,
-                                                                   @Valid @RequestBody UpdatePositionStatusRequest request) {
+            @PathVariable UUID positionId,
+            @Valid @RequestBody UpdatePositionStatusRequest request) {
         return ResponseEntity.ok(positionService.updatePositionStatus(positionId, request.getStatus()));
     }
 
     /**
-     * Position Status Interface — public endpoint consumed by ConnectHub.
+     * Position Status Interface - public endpoint consumed by ConnectHub.
      * Returns the plain-text status string for a position.
      *
      * @param positionId the position UUID

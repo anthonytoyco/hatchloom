@@ -1,31 +1,40 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.response.BMCResponse;
 import com.hatchloom.launchpad.model.BusinessModelCanvas;
 import com.hatchloom.launchpad.model.SideHustle;
 import com.hatchloom.launchpad.repository.BusinessModelCanvasRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 /**
- * TC-Q2-002 — Update BMC Section
+ * TC-Q2-002 - Update BMC Section
  *
- * <p>Requirements Coverage: HL-BMC-Update-Success</p>
+ * <p>
+ * Requirements Coverage: HL-BMC-Update-Success
+ * </p>
  *
- * <p>Verifies that {@link BMCService#editSection} updates only the requested BMC section,
- * leaves all other sections unchanged, rejects unknown section keys with 400, and
- * enforces ownership with 403.</p>
+ * <p>
+ * Verifies that {@link BMCService#editSection} updates only the requested BMC
+ * section,
+ * leaves all other sections unchanged, rejects unknown section keys with 400,
+ * and
+ * enforces ownership with 403.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class BMCServiceTest {
@@ -84,13 +93,12 @@ class BMCServiceTest {
         when(bmcRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         String[] validKeys = {
-            "key_partners", "key_activities", "key_resources",
-            "value_propositions", "customer_relationships", "channels",
-            "customer_segments", "cost_structure", "revenue_streams"
+                "key_partners", "key_activities", "key_resources",
+                "value_propositions", "customer_relationships", "channels",
+                "customer_segments", "cost_structure", "revenue_streams"
         };
         for (String key : validKeys) {
-            assertDoesNotThrow(() ->
-                    bmcService.editSection(sideHustleId, key, "content", callerId),
+            assertDoesNotThrow(() -> bmcService.editSection(sideHustleId, key, "content", callerId),
                     "Expected no exception for section key: " + key);
         }
     }
@@ -106,10 +114,6 @@ class BMCServiceTest {
         SideHustle sideHustle = new SideHustle();
         sideHustle.setStudentId(callerId);
         when(sideHustleService.findOrThrow(sideHustleId)).thenReturn(sideHustle);
-
-        BusinessModelCanvas bmc = new BusinessModelCanvas();
-        bmc.setSideHustle(sideHustle);
-        when(bmcRepository.findBySideHustle_Id(sideHustleId)).thenReturn(Optional.of(bmc));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> bmcService.editSection(sideHustleId, "not_a_real_section", "value", callerId));

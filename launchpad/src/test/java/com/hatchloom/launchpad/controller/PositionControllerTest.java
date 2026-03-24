@@ -26,9 +26,12 @@ import static org.mockito.Mockito.*;
 /**
  * Controller-layer unit tests for {@link PositionController}.
  *
- * <p>Covers both the protected SideHustle-scoped endpoints and the
- * public Position Status Interface ({@code GET /launchpad/positions/{id}/status})
- * consumed by ConnectHub.</p>
+ * <p>
+ * Covers both the protected SideHustle-scoped endpoints and the
+ * public Position Status Interface
+ * ({@code GET /launchpad/positions/{id}/status})
+ * consumed by ConnectHub.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class PositionControllerTest {
@@ -83,15 +86,14 @@ class PositionControllerTest {
         UpdatePositionStatusRequest request = new UpdatePositionStatusRequest();
         request.setStatus(PositionStatus.FILLED);
 
-        ResponseEntity<PositionResponse> response =
-                controller.updatePositionStatus(sideHustleId, positionId, request);
+        ResponseEntity<PositionResponse> response = controller.updatePositionStatus(sideHustleId, positionId, request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(PositionStatus.FILLED, response.getBody().getStatus());
     }
 
     /**
-     * Position Status Interface — public endpoint consumed by ConnectHub.
+     * Position Status Interface - public endpoint consumed by ConnectHub.
      * Verifies the controller returns the raw status string.
      */
     @Test

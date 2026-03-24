@@ -1,17 +1,19 @@
 package com.hatchloom.launchpad.factory;
 
+import java.util.UUID;
+
 import com.hatchloom.launchpad.model.SideHustle;
 import com.hatchloom.launchpad.model.enums.SideHustleStatus;
-
-import java.util.UUID;
 
 /**
  * Concrete factory that creates {@link SideHustle} instances in the
  * {@code IN_THE_LAB} experimental stage.
  *
- * <p>Plain Java class — stateless, no Spring annotation. Instantiated directly
+ * <p>
+ * Plain Java class - stateless, no Spring annotation. Instantiated directly
  * by {@link SideHustleFactoryProvider} when the requested type is
- * {@code IN_THE_LAB}.</p>
+ * {@code IN_THE_LAB}.
+ * </p>
  */
 public class InTheLabSideHustleFactory extends SideHustleFactory {
 
@@ -23,8 +25,7 @@ public class InTheLabSideHustleFactory extends SideHustleFactory {
      */
     @Override
     public SideHustle createSideHustle(
-            String title, String description, UUID studentId, UUID sandboxId
-    ) {
+            String title, String description, UUID studentId, UUID sandboxId) {
         SideHustle sideHustle = new SideHustle();
         sideHustle.setTitle(title);
         sideHustle.setDescription(description);

@@ -1,5 +1,18 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.hatchloom.launchpad.aggregator.LaunchPadAggregator;
 import com.hatchloom.launchpad.aggregator.dto.LaunchPadHomeView;
 import com.hatchloom.launchpad.dto.response.SandboxResponse;
@@ -7,27 +20,22 @@ import com.hatchloom.launchpad.dto.response.SideHustleResponse;
 import com.hatchloom.launchpad.model.Sandbox;
 import com.hatchloom.launchpad.model.SideHustle;
 import com.hatchloom.launchpad.model.enums.SideHustleStatus;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 /**
- * TC-Q2-004 — LaunchPad Home Summary Counts (Aggregator / Facade Pattern)
+ * TC-Q2-004 - LaunchPad Home Summary Counts (Aggregator / Facade Pattern)
  *
- * <p>Requirements Coverage: HL-LaunchPad-Home-Counts</p>
+ * <p>
+ * Requirements Coverage: HL-LaunchPad-Home-Counts
+ * </p>
  *
- * <p>Verifies that {@link LaunchPadAggregator#getHomeView(UUID)} correctly computes
- * {@code inTheLabCount}, {@code liveVenturesCount}, and assembles sandbox and sideHustle
- * summaries without persisting any data. Delegates entirely to the service layer.</p>
+ * <p>
+ * Verifies that {@link LaunchPadAggregator#getHomeView(UUID)} correctly
+ * computes
+ * {@code inTheLabCount}, {@code liveVenturesCount}, and assembles sandbox and
+ * sideHustle
+ * summaries without persisting any data. Delegates entirely to the service
+ * layer.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class LaunchPadAggregatorTest {
@@ -41,7 +49,8 @@ class LaunchPadAggregatorTest {
     private LaunchPadAggregator aggregator;
 
     /**
-     * TC-Q2-004 main path: 2 sandboxes + 1 LIVE_VENTURE (with open position) + 1 IN_THE_LAB.
+     * TC-Q2-004 main path: 2 sandboxes + 1 LIVE_VENTURE (with open position) + 1
+     * IN_THE_LAB.
      * Expected: inTheLabCount = 2, liveVenturesCount = 1, list sizes correct.
      */
     @Test
@@ -54,7 +63,7 @@ class LaunchPadAggregatorTest {
                 .thenReturn(List.of(SandboxResponse.from(sb1), SandboxResponse.from(sb2)));
 
         SideHustle liveVenture = sideHustleWith("Live Hustle", SideHustleStatus.LIVE_VENTURE, true);
-        SideHustle inTheLab   = sideHustleWith("Lab Hustle",  SideHustleStatus.IN_THE_LAB,  false);
+        SideHustle inTheLab = sideHustleWith("Lab Hustle", SideHustleStatus.IN_THE_LAB, false);
         when(sideHustleService.listByStudent(studentId))
                 .thenReturn(List.of(SideHustleResponse.from(liveVenture), SideHustleResponse.from(inTheLab)));
 

@@ -1,5 +1,7 @@
 package com.hatchloom.launchpad.model;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,18 +11,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
-import java.util.UUID;
-
 /**
  * Business Model Canvas associated one-to-one with a {@link SideHustle}.
  *
- * <p>All nine BMC sections are stored as nullable {@code TEXT} fields — a section
+ * <p>
+ * All nine BMC sections are stored as nullable {@code TEXT} fields - a section
  * is empty until the student fills it in via a PATCH request. This record is
- * auto-created (with all sections null) when its parent SideHustle is created.</p>
+ * auto-created (with all sections null) when its parent SideHustle is created.
+ * </p>
  *
- * <p>The table is named {@code bmc_sections} to match the design doc data store
+ * <p>
+ * The table is named {@code bmc_sections} to match the design doc data store
  * specification; without {@code @Table} Hibernate would look for
- * {@code business_model_canvases}.</p>
+ * {@code business_model_canvases}.
+ * </p>
  */
 @Entity
 @Table(name = "bmc_sections")
@@ -62,37 +66,90 @@ public class BusinessModelCanvas {
     private String revenueStreams;
 
     /** Default constructor required by JPA. */
-    public BusinessModelCanvas() {}
+    public BusinessModelCanvas() {
+    }
 
-    public UUID getId() { return id; }
+    public UUID getId() {
+        return id;
+    }
 
-    public SideHustle getSideHustle() { return sideHustle; }
-    public void setSideHustle(SideHustle sideHustle) { this.sideHustle = sideHustle; }
+    public SideHustle getSideHustle() {
+        return sideHustle;
+    }
 
-    public String getKeyPartners() { return keyPartners; }
-    public void setKeyPartners(String keyPartners) { this.keyPartners = keyPartners; }
+    public void setSideHustle(SideHustle sideHustle) {
+        this.sideHustle = sideHustle;
+    }
 
-    public String getKeyActivities() { return keyActivities; }
-    public void setKeyActivities(String keyActivities) { this.keyActivities = keyActivities; }
+    public String getKeyPartners() {
+        return keyPartners;
+    }
 
-    public String getKeyResources() { return keyResources; }
-    public void setKeyResources(String keyResources) { this.keyResources = keyResources; }
+    public void setKeyPartners(String keyPartners) {
+        this.keyPartners = keyPartners;
+    }
 
-    public String getValuePropositions() { return valuePropositions; }
-    public void setValuePropositions(String valuePropositions) { this.valuePropositions = valuePropositions; }
+    public String getKeyActivities() {
+        return keyActivities;
+    }
 
-    public String getCustomerRelationships() { return customerRelationships; }
-    public void setCustomerRelationships(String customerRelationships) { this.customerRelationships = customerRelationships; }
+    public void setKeyActivities(String keyActivities) {
+        this.keyActivities = keyActivities;
+    }
 
-    public String getChannels() { return channels; }
-    public void setChannels(String channels) { this.channels = channels; }
+    public String getKeyResources() {
+        return keyResources;
+    }
 
-    public String getCustomerSegments() { return customerSegments; }
-    public void setCustomerSegments(String customerSegments) { this.customerSegments = customerSegments; }
+    public void setKeyResources(String keyResources) {
+        this.keyResources = keyResources;
+    }
 
-    public String getCostStructure() { return costStructure; }
-    public void setCostStructure(String costStructure) { this.costStructure = costStructure; }
+    public String getValuePropositions() {
+        return valuePropositions;
+    }
 
-    public String getRevenueStreams() { return revenueStreams; }
-    public void setRevenueStreams(String revenueStreams) { this.revenueStreams = revenueStreams; }
+    public void setValuePropositions(String valuePropositions) {
+        this.valuePropositions = valuePropositions;
+    }
+
+    public String getCustomerRelationships() {
+        return customerRelationships;
+    }
+
+    public void setCustomerRelationships(String customerRelationships) {
+        this.customerRelationships = customerRelationships;
+    }
+
+    public String getChannels() {
+        return channels;
+    }
+
+    public void setChannels(String channels) {
+        this.channels = channels;
+    }
+
+    public String getCustomerSegments() {
+        return customerSegments;
+    }
+
+    public void setCustomerSegments(String customerSegments) {
+        this.customerSegments = customerSegments;
+    }
+
+    public String getCostStructure() {
+        return costStructure;
+    }
+
+    public void setCostStructure(String costStructure) {
+        this.costStructure = costStructure;
+    }
+
+    public String getRevenueStreams() {
+        return revenueStreams;
+    }
+
+    public void setRevenueStreams(String revenueStreams) {
+        this.revenueStreams = revenueStreams;
+    }
 }

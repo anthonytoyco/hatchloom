@@ -5,15 +5,17 @@ import com.hatchloom.launchpad.model.enums.PositionStatus;
 /**
  * State implementation for a position in the {@code FILLED} terminal state.
  *
- * <p>No further transitions are allowed. Both methods throw
- * {@link IllegalStateException}.</p>
+ * <p>
+ * No further transitions are allowed. Both methods throw
+ * {@link IllegalStateException}.
+ * </p>
  */
 public class FilledState implements PositionState {
 
     /**
      * {@inheritDoc}
      *
-     * @throws IllegalStateException always — FILLED is a terminal state
+     * @throws IllegalStateException always - FILLED is a terminal state
      */
     @Override
     public PositionStatus transitionToFilled() {
@@ -23,7 +25,7 @@ public class FilledState implements PositionState {
     /**
      * {@inheritDoc}
      *
-     * @throws IllegalStateException always — FILLED is a terminal state
+     * @throws IllegalStateException always - FILLED is a terminal state
      */
     @Override
     public PositionStatus transitionToClosed() {

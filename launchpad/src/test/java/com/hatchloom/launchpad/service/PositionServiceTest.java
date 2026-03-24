@@ -1,5 +1,24 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.request.CreatePositionRequest;
 import com.hatchloom.launchpad.dto.response.PositionResponse;
 import com.hatchloom.launchpad.model.Position;
@@ -8,30 +27,20 @@ import com.hatchloom.launchpad.model.enums.PositionStatus;
 import com.hatchloom.launchpad.repository.PositionRepository;
 import com.hatchloom.launchpad.repository.SideHustleRepository;
 import com.hatchloom.launchpad.state.PositionStateContext;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
- * TC-Q2-003 — Create Open Position
+ * TC-Q2-003 - Create Open Position
  *
- * <p>Requirements Coverage: HL-Position-Created-Success</p>
+ * <p>
+ * Requirements Coverage: HL-Position-Created-Success
+ * </p>
  *
- * <p>Verifies that {@link PositionService#createPosition} creates a Position with
- * {@code status = OPEN}, sets {@code SideHustle.hasOpenPositions = true}, and that the
- * State pattern correctly enforces and rejects status transitions.</p>
+ * <p>
+ * Verifies that {@link PositionService#createPosition} creates a Position with
+ * {@code status = OPEN}, sets {@code SideHustle.hasOpenPositions = true}, and
+ * that the
+ * State pattern correctly enforces and rejects status transitions.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class PositionServiceTest {
@@ -106,7 +115,8 @@ class PositionServiceTest {
     }
 
     /**
-     * Creating a position for a SideHustle owned by another student must return 403.
+     * Creating a position for a SideHustle owned by another student must return
+     * 403.
      */
     @Test
     void createPosition_callerNotOwner_returns403() {
@@ -150,7 +160,8 @@ class PositionServiceTest {
     }
 
     /**
-     * State pattern: FILLED is a terminal state — transitioning to FILLED again must
+     * State pattern: FILLED is a terminal state - transitioning to FILLED again
+     * must
      * throw {@link IllegalStateException} per {@code FilledState}.
      */
     @Test
@@ -169,7 +180,8 @@ class PositionServiceTest {
     }
 
     /**
-     * State pattern: OPEN is never a valid target — {@code PositionStateContext} must
+     * State pattern: OPEN is never a valid target - {@code PositionStateContext}
+     * must
      * throw {@link IllegalArgumentException} for unsupported target states.
      */
     @Test
