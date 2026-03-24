@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-LaunchpadApplication<launchpad>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.hatchloom.launchpad.LaunchpadApplication",
+            "projectName": "launchpad",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
