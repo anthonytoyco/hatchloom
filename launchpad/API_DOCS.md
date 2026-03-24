@@ -88,7 +88,7 @@ Creates a new Sandbox for a student.
 | `title` | String | Yes | max 255 characters |
 | `description` | String | No | - |
 
-**Success response - 201 Created**
+**Success response - 200 OK**
 
 ```json
 {
@@ -889,6 +889,7 @@ Transitions a Position to a new status (State pattern). Valid transitions:
 |---|---|
 | 400 | Missing `status` or invalid transition (e.g. FILLED → OPEN) |
 | 401 | Missing or invalid Bearer token |
+| 403 | Caller does not own the SideHustle |
 | 404 | Position or SideHustle not found |
 
 ---
