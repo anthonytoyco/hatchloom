@@ -1,0 +1,34 @@
+@startuml
+title LaunchPad Home Aggregation Sequence
+
+actor Student as User
+participant "Client App" as Client
+participant "LaunchPadHomeController" as HomeController
+participant "LaunchPadAggregator\n(Facade)" as Aggregator
+participant "SandboxService" as Sandbox
+participant "SideHustleService" as SideHustle
+database "LaunchPad Data Store" as DB
+
+User -> Client: Visit LaunchPad home
+Client -> HomeController: GET /launchpad/home/{userId}\nAuthorization: Bearer <jwt>
+note right of HomeController
+	JWT is validated before controller handling.
+end note
+HomeController -> Aggregator: getHomeView(userId)
+
+Aggregator -> Sandbox: listByStudent(userId)
+Sandbox -> DB: query sandboxes by student_id
+DB --> Sandbox: sandbox rows
+Sandbox --> Aggregator: sandbox summaries
+
+Aggregator -> SideHustle: listByStudent(userId)
+SideHustle -> DB: query side_hustles by student_id
+DB --> SideHustle: side_hustle rows
+SideHustle --> Aggregator: side_hustle summaries\n(with hasOpenPositions)
+
+Aggregator -> Aggregator: compose LaunchPadHomeView\ninTheLabCount = sandboxes.size()\nliveVenturesCount = count(status=LIVE_VENTURE)
+Aggregator --> HomeController: LaunchPadHomeView
+HomeController --> Client: 200 OK + aggregated home JSON
+Client --> User: Display LaunchPad overview
+
+@enduml

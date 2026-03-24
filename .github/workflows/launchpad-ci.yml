@@ -5,12 +5,24 @@ on:
   push:
     branches: [main]
     paths:
-      - launchpad/**
+      - src/**
+      - pom.xml
+      - mvnw
+      - mvnw.cmd
+      - .mvn/**
+      - Dockerfile
+      - compose.yaml
       - .github/workflows/launchpad-ci.yml
   pull_request:
     branches: [main]
     paths:
-      - launchpad/**
+      - src/**
+      - pom.xml
+      - mvnw
+      - mvnw.cmd
+      - .mvn/**
+      - Dockerfile
+      - compose.yaml
       - .github/workflows/launchpad-ci.yml
 
 jobs:
@@ -31,11 +43,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-    defaults:
-      run:
-        # All shell steps run from the service directory
-        working-directory: launchpad
 
     env:
       # Point Spring to the service-container database in GitHub Actions
@@ -64,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: launchpad-surefire-reports
-          path: launchpad/target/surefire-reports/**
+          path: target/surefire-reports/**
 
   # Build and publish image only for pushes to main after tests pass
   build-docker:
@@ -93,9 +100,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          # Build from the LaunchPad service directory and publish to GitHub Container Registry with both "latest" and commit SHA tags
-          context: ./launchpad
-          file: ./launchpad/Dockerfile
+          # Build from repository root and publish to GitHub Container Registry with both "latest" and commit SHA tags
+          context: .
+          file: ./Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/hatchloom-launchpad:latest

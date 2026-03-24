@@ -1,0 +1,43 @@
+@startuml
+title SideHustle BMC Section Edit Sequence
+
+actor Student as User
+participant "Client App" as Client
+participant "SideHustleController" as SideHustleController
+participant "BMCController" as BMCController
+participant "BMCService" as BMCService
+participant "SideHustleService" as SideHustleService
+database "LaunchPad Data Store" as DB
+
+User -> Client: Open SideHustle page
+Client -> SideHustleController: GET /launchpad/sidehustles/{sideHustleId}\nAuthorization: Bearer <jwt>
+note right of SideHustleController
+	JWT is validated before controller handling.
+end note
+SideHustleController -> DB: read side_hustles row
+DB --> SideHustleController: SideHustle details
+SideHustleController --> Client: 200 OK + SideHustle JSON
+
+Client -> BMCController: GET /launchpad/sidehustles/{sideHustleId}/bmc
+BMCController -> BMCService: getBMC(sideHustleId)
+BMCService -> DB: read bmc_sections by side_hustle_id
+DB --> BMCService: full BMC record
+BMCService --> BMCController: BMCResponse
+BMCController --> Client: 200 OK + BMC JSON
+Client --> User: Render 9 BMC sections
+
+User -> Client: Edit one BMC section and submit
+Client -> BMCController: PATCH /launchpad/sidehustles/{sideHustleId}/bmc\n{section, content}
+BMCController -> BMCService: editSection(sideHustleId, section, content, callerId)
+BMCService -> SideHustleService: findOrThrow(sideHustleId)
+SideHustleService -> DB: read side_hustles row
+DB --> SideHustleService: SideHustle owner student_id
+SideHustleService --> BMCService: SideHustle entity
+BMCService -> BMCService: validate ownership + parse section enum key
+BMCService -> DB: update one bmc_sections field
+DB --> BMCService: persisted BMC row
+BMCService --> BMCController: updated BMCResponse
+BMCController --> Client: 200 OK + updated BMC JSON
+Client --> User: Show section update confirmation
+
+@enduml

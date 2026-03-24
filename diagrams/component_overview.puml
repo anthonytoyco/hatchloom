@@ -1,0 +1,57 @@
+@startuml
+title Hatchloom System Overview Component Diagram
+top to bottom direction
+
+actor "Student / Teacher\nParent / Admin\nEntrepreneur" as User
+
+component "Client Application\n(Web / Mobile UI)" as Client
+component "API Gateway" as Gateway
+
+component "Auth & User Profile Service" as Auth
+component "LaunchPad Service" as LaunchPad
+component "ConnectHub Service" as ConnectHub
+
+database "Persistent Data Store\n(users, sessions, profiles,\nsandboxes, sandbox_tools, side_hustles,\nbmc_sections, teams, team_members, positions,\nfeed_posts, classified_posts, messages)" as DB
+
+interface "Position Status Interface\nGET /launchpad/positions/{id}/status" as PositionStatus
+
+User --> Client
+Client --> Gateway : HTTP requests
+
+Gateway --> Auth : auth + profile operations
+Gateway --> LaunchPad : LaunchPad APIs
+Gateway --> ConnectHub : ConnectHub APIs
+
+Auth --> DB : read/write users + sessions + profiles
+LaunchPad --> DB : read/write LaunchPad tables
+ConnectHub --> DB : read/write feed + classifieds + messages
+
+LaunchPad - PositionStatus
+ConnectHub --> PositionStatus : read current position state
+
+note right of Gateway
+  Routes requests, validates session,
+  and enforces RBAC.
+end note
+
+note right of Auth
+  Registration, login, token/session,
+  and user profile management.
+end note
+
+note right of LaunchPad
+  Sandbox, SideHustle, BMC,
+  team, and position modules.
+end note
+
+note right of ConnectHub
+  Feed, classifieds, and messaging.
+end note
+
+note right of ConnectHub
+  Classifieds consult LaunchPad
+  position status to determine
+  OPEN/FILLED/CLOSED behavior.
+end note
+
+@enduml

@@ -19,7 +19,6 @@ Requires a local PostgreSQL instance. Spring Boot Docker Compose integration
 will auto-start the `compose.yaml` Postgres service when you run:
 
 ```bash
-cd launchpad
 ./mvnw spring-boot:run
 ```
 
@@ -30,7 +29,6 @@ The service starts on port **8082** (mapped from container port 8080).
 Builds the image and starts Postgres + LaunchPad together:
 
 ```bash
-cd launchpad
 docker compose up --build
 ```
 
@@ -45,14 +43,12 @@ The service will be available at `http://localhost:8082`.
 Unit tests only (no database required):
 
 ```bash
-cd launchpad
 ./mvnw test
 ```
 
 Integration tests (requires a running Postgres):
 
 ```bash
-cd launchpad
 ./mvnw test -Dgroups=integration \
   -DSPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/launchpad_db \
   -DSPRING_DATASOURCE_USERNAME=launchpad_user \
@@ -62,7 +58,7 @@ cd launchpad
 ## Environment variables
 
 | Variable | Default (local) | Docker value |
-|---|---|---|
+| --- | --- | --- |
 | `SPRING_DATASOURCE_URL` | (Spring Docker Compose) | `jdbc:postgresql://postgres:5432/launchpad_db` |
 | `SPRING_DATASOURCE_USERNAME` | `launchpad_user` | `launchpad_user` |
 | `SPRING_DATASOURCE_PASSWORD` | `launchpad_pass` | `launchpad_pass` |
@@ -72,7 +68,7 @@ cd launchpad
 ## Cross-service dependencies
 
 | Dependency | Direction | Details |
-|---|---|---|
+| --- | --- | --- |
 | Auth service | LaunchPad validates JWTs | `issuer-uri` must point to the Auth service OIDC discovery endpoint. LaunchPad does NOT issue tokens. |
 | ConnectHub | ConnectHub calls LaunchPad | `GET /launchpad/positions/{positionId}/status` - public, no token required. Returns `"OPEN"`, `"FILLED"`, or `"CLOSED"`. |
 

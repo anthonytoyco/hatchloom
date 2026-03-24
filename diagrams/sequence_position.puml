@@ -1,0 +1,41 @@
+@startuml
+title SideHustle Position Creation Sequence
+
+actor Student as User
+participant "Client App" as Client
+participant "PositionController" as PositionController
+participant "PositionService" as PositionService
+participant "SideHustleService" as SideHustleService
+database "LaunchPad Data Store" as DB
+participant "ConnectHub Classifieds\n(consumer)" as ConnectHub
+
+User -> Client: Click create position and submit form
+Client -> PositionController: POST /launchpad/sidehustles/{sideHustleId}/positions\nAuthorization: Bearer <jwt>
+note right of PositionController
+	JWT is validated before controller handling.
+end note
+PositionController -> PositionService: createPosition(sideHustleId, request, callerId)
+
+PositionService -> SideHustleService: findOrThrow(sideHustleId)
+SideHustleService -> DB: read side_hustles row
+DB --> SideHustleService: SideHustle entity
+SideHustleService --> PositionService: SideHustle owner data
+PositionService -> PositionService: validate caller owns SideHustle
+
+PositionService -> DB: insert positions row with status = OPEN
+PositionService -> DB: update side_hustles.has_open_positions = true
+DB --> PositionService: persisted position + side_hustle updates
+
+PositionService --> PositionController: PositionResponse
+PositionController --> Client: 200 OK + created position JSON
+Client --> User: Show creation success message
+
+== Public extension used by ConnectHub ==
+ConnectHub -> PositionController: GET /launchpad/positions/{positionId}/status (public)
+PositionController -> PositionService: getPositionStatus(positionId)
+PositionService -> DB: read positions.status
+DB --> PositionService: OPEN | FILLED | CLOSED
+PositionService --> PositionController: plain status string
+PositionController --> ConnectHub: 200 OK (text)
+
+@enduml

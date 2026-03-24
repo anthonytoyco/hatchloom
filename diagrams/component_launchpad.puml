@@ -1,0 +1,64 @@
+@startuml
+title LaunchPad Service Component Diagram
+left to right direction
+
+package "LaunchPad Service" {
+
+  [LaunchPad Interface\n(REST Controllers)] as API
+
+  component "LaunchPadAggregator\n(Facade)" as Aggregator
+  component "Sandbox Module\nSandboxService + SandboxToolService" as SandboxModule
+  component "SideHustle Module\nSideHustleService" as SideHustleModule
+  component "BMC Module\nBMCService" as BMCModule
+  component "Team Module\nTeamService" as TeamModule
+  component "Position Module\nPositionService" as PositionModule
+  component "Security Module\nJWT Resource Server" as SecurityModule
+
+  database "LaunchPad Data Store\n(sandboxes, sandbox_tools, side_hustles,\nbmc_sections, teams, team_members, positions)" as LaunchPadDB
+}
+
+component "Position Status Interface\nGET /launchpad/positions/{id}/status" as PositionStatusInterface
+component "ConnectHub Classifieds" as ConnectHub
+component "Auth Service\nJWT Issuer" as AuthService
+
+API --> SecurityModule : all requests
+SecurityModule --> AuthService : validate JWT issuer/signature
+
+API --> Aggregator : /launchpad/home/{userId}
+API --> SandboxModule : sandbox + tool CRUD
+API --> SideHustleModule : sidehustle CRUD
+API --> BMCModule : get + patch BMC
+API --> TeamModule : team member CRUD
+API --> PositionModule : position create/list/update
+API --> PositionStatusInterface : public status read
+
+Aggregator --> SandboxModule : listByStudent
+Aggregator --> SideHustleModule : listByStudent
+
+SideHustleModule --> LaunchPadDB : read/write side_hustles
+SideHustleModule --> LaunchPadDB : auto-create bmc_sections + teams
+SandboxModule --> LaunchPadDB : read/write sandboxes + sandbox_tools
+BMCModule --> LaunchPadDB : read/write bmc_sections
+TeamModule --> LaunchPadDB : read/write teams + team_members
+PositionModule --> LaunchPadDB : read/write positions
+PositionModule --> LaunchPadDB : maintain has_open_positions
+
+PositionStatusInterface --> PositionModule : delegate get status
+ConnectHub --> PositionStatusInterface : consume public endpoint
+
+note right of SideHustleModule
+  On SideHustle creation:
+  - SideHustleFactoryProvider selects subtype by status
+  - Empty BMC is created
+  - Empty Team is created
+end note
+
+note right of PositionModule
+  Uses PositionStateContext.
+  State transitions:
+  OPEN -> FILLED
+  OPEN -> CLOSED
+  FILLED/CLOSED are terminal
+end note
+
+@enduml
