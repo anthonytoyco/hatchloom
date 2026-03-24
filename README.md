@@ -1,7 +1,5 @@
 # LaunchPad Service
 
-Sub-Pack Q2 | Team Quebec | Hatchloom Inc.
-
 LaunchPad is the student entrepreneurship workspace microservice for Hatchloom.
 It owns Sandboxes, SideHustles, Business Model Canvases, Teams, and Positions.
 It exposes one public endpoint (Position Status Interface) consumed by ConnectHub.
