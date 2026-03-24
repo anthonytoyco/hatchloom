@@ -24,6 +24,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    # auth service is external - it is NOT defined here.
+    # auth service is external - it is NOT defined here
     # Token validation will fail if auth is unreachable, but
-    # GET /launchpad/positions/{id}/status remains public regardless.
+    # GET /launchpad/positions/{id}/status remains public regardless

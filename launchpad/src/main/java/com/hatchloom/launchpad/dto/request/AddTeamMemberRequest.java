@@ -1,8 +1,8 @@
 package com.hatchloom.launchpad.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.util.UUID;
+
+import jakarta.validation.constraints.NotNull;
 
 /** Request body for adding a member to a SideHustle team. */
 public class AddTeamMemberRequest {
@@ -12,9 +12,19 @@ public class AddTeamMemberRequest {
 
     private String role;
 
-    public UUID getUserId() { return userId; }
-    public void setUserId(UUID userId) { this.userId = userId; }
+    public UUID getUserId() {
+        return userId;
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

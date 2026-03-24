@@ -1,9 +1,9 @@
 package com.hatchloom.launchpad.dto.response;
 
-import com.hatchloom.launchpad.model.SandboxTool;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.hatchloom.launchpad.model.SandboxTool;
 
 /** Response body representing a SandboxTool. */
 public class SandboxToolResponse {
@@ -30,9 +30,23 @@ public class SandboxToolResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getSandboxId() { return sandboxId; }
-    public String getToolType() { return toolType; }
-    public String getData() { return data; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getSandboxId() {
+        return sandboxId;
+    }
+
+    public String getToolType() {
+        return toolType;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -1,12 +1,13 @@
 package com.hatchloom.launchpad.aggregator.dto;
 
+import java.util.UUID;
+
 import com.hatchloom.launchpad.dto.response.SideHustleResponse;
 import com.hatchloom.launchpad.model.enums.SideHustleStatus;
 
-import java.util.UUID;
-
 /**
- * Lightweight summary of a {@link SideHustleResponse} used in the LaunchPad home view.
+ * Lightweight summary of a {@link SideHustleResponse} used in the LaunchPad
+ * home view.
  * Includes the {@code hasOpenPositions} flag so the UI can show a badge.
  */
 public class SideHustleSummary {
@@ -31,8 +32,19 @@ public class SideHustleSummary {
         return s;
     }
 
-    public UUID getId() { return id; }
-    public String getTitle() { return title; }
-    public SideHustleStatus getStatus() { return status; }
-    public boolean isHasOpenPositions() { return hasOpenPositions; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public SideHustleStatus getStatus() {
+        return status;
+    }
+
+    public boolean isHasOpenPositions() {
+        return hasOpenPositions;
+    }
 }

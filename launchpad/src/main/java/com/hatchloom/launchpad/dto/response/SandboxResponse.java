@@ -1,9 +1,9 @@
 package com.hatchloom.launchpad.dto.response;
 
-import com.hatchloom.launchpad.model.Sandbox;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.hatchloom.launchpad.model.Sandbox;
 
 /** Response body representing a Sandbox. */
 public class SandboxResponse {
@@ -32,10 +32,27 @@ public class SandboxResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getStudentId() { return studentId; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getStudentId() {
+        return studentId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

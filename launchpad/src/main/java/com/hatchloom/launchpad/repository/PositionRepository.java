@@ -1,11 +1,12 @@
 package com.hatchloom.launchpad.repository;
 
-import com.hatchloom.launchpad.model.Position;
-import com.hatchloom.launchpad.model.enums.PositionStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.hatchloom.launchpad.model.Position;
+import com.hatchloom.launchpad.model.enums.PositionStatus;
 
 /**
  * Repository for {@link Position} entities.
@@ -22,7 +23,8 @@ public interface PositionRepository extends JpaRepository<Position, UUID> {
 
     /**
      * Checks whether any position with the given status exists for a SideHustle.
-     * Used to recalculate {@code SideHustle.hasOpenPositions} after a status change.
+     * Used to recalculate {@code SideHustle.hasOpenPositions} after a status
+     * change.
      *
      * @param sideHustleId the SideHustle's UUID
      * @param status       the status to check for (typically {@code OPEN})

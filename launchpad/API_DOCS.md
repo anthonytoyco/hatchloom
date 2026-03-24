@@ -402,7 +402,7 @@ Creates a new SideHustle using the Factory Method pattern. Auto-creates an empty
 | Field | Type | Required | Constraints |
 |---|---|---|---|
 | `studentId` | UUID | Yes | - |
-| `sandboxId` | UUID | Yes | Must reference an existing Sandbox; 400 if absent |
+| `sandboxId` | UUID | Yes | Must reference an existing Sandbox: 400 if absent |
 | `title` | String | Yes | max 255 characters |
 | `description` | String | No | - |
 | `type` | SideHustleStatus | Yes | `IN_THE_LAB` or `LIVE_VENTURE` |

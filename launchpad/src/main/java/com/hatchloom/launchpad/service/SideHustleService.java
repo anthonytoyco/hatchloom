@@ -1,5 +1,15 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.request.CreateSideHustleRequest;
 import com.hatchloom.launchpad.dto.request.UpdateSideHustleRequest;
 import com.hatchloom.launchpad.dto.response.SideHustleResponse;
@@ -11,22 +21,15 @@ import com.hatchloom.launchpad.model.Team;
 import com.hatchloom.launchpad.repository.BusinessModelCanvasRepository;
 import com.hatchloom.launchpad.repository.SideHustleRepository;
 import com.hatchloom.launchpad.repository.TeamRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service for SideHustle CRUD operations.
  *
- * <p>Uses the Factory Method pattern (via {@link SideHustleFactoryProvider}) to
+ * <p>
+ * Uses the Factory Method pattern (via {@link SideHustleFactoryProvider}) to
  * instantiate the correct SideHustle subtype. Auto-creates an empty
- * {@link BusinessModelCanvas} and {@link Team} on every SideHustle creation.</p>
+ * {@link BusinessModelCanvas} and {@link Team} on every SideHustle creation.
+ * </p>
  */
 @Service
 public class SideHustleService {
@@ -40,10 +43,10 @@ public class SideHustleService {
     private final SandboxService sandboxService;
 
     public SideHustleService(SideHustleRepository sideHustleRepository,
-                             BusinessModelCanvasRepository bmcRepository,
-                             TeamRepository teamRepository,
-                             SideHustleFactoryProvider factoryProvider,
-                             SandboxService sandboxService) {
+            BusinessModelCanvasRepository bmcRepository,
+            TeamRepository teamRepository,
+            SideHustleFactoryProvider factoryProvider,
+            SandboxService sandboxService) {
         this.sideHustleRepository = sideHustleRepository;
         this.bmcRepository = bmcRepository;
         this.teamRepository = teamRepository;
@@ -140,7 +143,8 @@ public class SideHustleService {
     }
 
     /**
-     * Returns the raw {@link SideHustle} entity or throws 404. Used by other services.
+     * Returns the raw {@link SideHustle} entity or throws 404. Used by other
+     * services.
      *
      * @param sideHustleId the SideHustle UUID
      * @return the {@link SideHustle} entity

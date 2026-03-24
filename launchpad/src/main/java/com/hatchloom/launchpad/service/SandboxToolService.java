@@ -1,18 +1,19 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.request.CreateSandboxToolRequest;
 import com.hatchloom.launchpad.dto.request.UpdateSandboxToolRequest;
 import com.hatchloom.launchpad.dto.response.SandboxToolResponse;
 import com.hatchloom.launchpad.model.Sandbox;
 import com.hatchloom.launchpad.model.SandboxTool;
 import com.hatchloom.launchpad.repository.SandboxToolRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service for SandboxTool CRUD operations.
@@ -24,7 +25,7 @@ public class SandboxToolService {
     private final SandboxService sandboxService;
 
     public SandboxToolService(SandboxToolRepository sandboxToolRepository,
-                              SandboxService sandboxService) {
+            SandboxService sandboxService) {
         this.sandboxToolRepository = sandboxToolRepository;
         this.sandboxService = sandboxService;
     }
@@ -71,7 +72,7 @@ public class SandboxToolService {
      */
     @Transactional
     public SandboxToolResponse updateTool(UUID sandboxId, UUID toolId,
-                                          UpdateSandboxToolRequest request) {
+            UpdateSandboxToolRequest request) {
         SandboxTool tool = findToolInSandbox(sandboxId, toolId);
         tool.setData(request.getData());
         return SandboxToolResponse.from(sandboxToolRepository.save(tool));

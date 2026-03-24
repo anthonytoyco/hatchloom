@@ -28,4 +28,4 @@ Workflow file: [launchpad-ci.yml](launchpad-ci.yml)
 ### Notes
 
 - The workflow is intentionally scoped to LaunchPad paths to avoid running for unrelated service changes.
-- Auth service is not started in CI; LaunchPad tests run with an explicit issuer URI value in workflow environment variables.
+- Auth service is not started in CI: LaunchPad tests run with an explicit issuer URI value in workflow environment variables.

@@ -1,21 +1,25 @@
 package com.hatchloom.launchpad.controller;
 
-import com.hatchloom.launchpad.aggregator.LaunchPadAggregator;
-import com.hatchloom.launchpad.aggregator.dto.LaunchPadHomeView;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import com.hatchloom.launchpad.aggregator.LaunchPadAggregator;
+import com.hatchloom.launchpad.aggregator.dto.LaunchPadHomeView;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller for the LaunchPad home aggregation endpoint.
  *
- * <p>Delegates entirely to {@link LaunchPadAggregator} (Facade pattern) to compose
- * the home view from Sandbox and SideHustle data.</p>
+ * <p>
+ * Delegates entirely to {@link LaunchPadAggregator} (Facade pattern) to compose
+ * the home view from Sandbox and SideHustle data.
+ * </p>
  */
 @RestController
 @RequestMapping("/launchpad/home")

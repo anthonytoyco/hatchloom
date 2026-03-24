@@ -1,10 +1,11 @@
 package com.hatchloom.launchpad.repository;
 
-import com.hatchloom.launchpad.model.Sandbox;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.hatchloom.launchpad.model.Sandbox;
 
 /**
  * Repository for {@link Sandbox} entities.

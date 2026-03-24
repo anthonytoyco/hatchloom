@@ -1,9 +1,9 @@
 package com.hatchloom.launchpad.dto.response;
 
-import com.hatchloom.launchpad.model.TeamMember;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.hatchloom.launchpad.model.TeamMember;
 
 /** Response body representing a TeamMember. */
 public class TeamMemberResponse {
@@ -30,9 +30,23 @@ public class TeamMemberResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getTeamId() { return teamId; }
-    public UUID getStudentId() { return studentId; }
-    public String getRole() { return role; }
-    public LocalDateTime getJoinedAt() { return joinedAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getTeamId() {
+        return teamId;
+    }
+
+    public UUID getStudentId() {
+        return studentId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public LocalDateTime getJoinedAt() {
+        return joinedAt;
+    }
 }

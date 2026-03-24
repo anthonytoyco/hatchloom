@@ -1,11 +1,12 @@
 package com.hatchloom.launchpad.aggregator.dto;
 
-import com.hatchloom.launchpad.dto.response.SandboxResponse;
-
 import java.util.UUID;
 
+import com.hatchloom.launchpad.dto.response.SandboxResponse;
+
 /**
- * Lightweight summary of a {@link SandboxResponse} used in the LaunchPad home view.
+ * Lightweight summary of a {@link SandboxResponse} used in the LaunchPad home
+ * view.
  */
 public class SandboxSummary {
 
@@ -25,6 +26,11 @@ public class SandboxSummary {
         return s;
     }
 
-    public UUID getId() { return id; }
-    public String getTitle() { return title; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

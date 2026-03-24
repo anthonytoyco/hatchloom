@@ -1,10 +1,10 @@
 package com.hatchloom.launchpad.dto.response;
 
-import com.hatchloom.launchpad.model.SideHustle;
-import com.hatchloom.launchpad.model.enums.SideHustleStatus;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.hatchloom.launchpad.model.SideHustle;
+import com.hatchloom.launchpad.model.enums.SideHustleStatus;
 
 /** Response body representing a SideHustle. */
 public class SideHustleResponse {
@@ -39,13 +39,39 @@ public class SideHustleResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getStudentId() { return studentId; }
-    public UUID getSandboxId() { return sandboxId; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public SideHustleStatus getStatus() { return status; }
-    public boolean isHasOpenPositions() { return hasOpenPositions; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getStudentId() {
+        return studentId;
+    }
+
+    public UUID getSandboxId() {
+        return sandboxId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public SideHustleStatus getStatus() {
+        return status;
+    }
+
+    public boolean isHasOpenPositions() {
+        return hasOpenPositions;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

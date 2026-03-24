@@ -1,30 +1,36 @@
 package com.hatchloom.launchpad.controller;
 
-import com.hatchloom.launchpad.dto.request.EditBMCRequest;
-import com.hatchloom.launchpad.dto.response.BMCResponse;
-import com.hatchloom.launchpad.model.BusinessModelCanvas;
-import com.hatchloom.launchpad.model.SideHustle;
-import com.hatchloom.launchpad.service.BMCService;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import com.hatchloom.launchpad.dto.request.EditBMCRequest;
+import com.hatchloom.launchpad.dto.response.BMCResponse;
+import com.hatchloom.launchpad.model.BusinessModelCanvas;
+import com.hatchloom.launchpad.model.SideHustle;
+import com.hatchloom.launchpad.service.BMCService;
 
 /**
  * Controller-layer unit tests for {@link BMCController}.
  *
- * <p>Verifies that the controller extracts the caller UUID from the JWT subject
- * and delegates to {@link BMCService} with the correct arguments.</p>
+ * <p>
+ * Verifies that the controller extracts the caller UUID from the JWT subject
+ * and delegates to {@link BMCService} with the correct arguments.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class BMCControllerTest {

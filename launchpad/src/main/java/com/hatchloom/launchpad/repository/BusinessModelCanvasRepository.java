@@ -1,10 +1,11 @@
 package com.hatchloom.launchpad.repository;
 
-import com.hatchloom.launchpad.model.BusinessModelCanvas;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.hatchloom.launchpad.model.BusinessModelCanvas;
 
 /**
  * Repository for {@link BusinessModelCanvas} entities.

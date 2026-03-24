@@ -12,9 +12,19 @@ public class CreateSandboxToolRequest {
 
     private String data;
 
-    public String getToolType() { return toolType; }
-    public void setToolType(String toolType) { this.toolType = toolType; }
+    public String getToolType() {
+        return toolType;
+    }
 
-    public String getData() { return data; }
-    public void setData(String data) { this.data = data; }
+    public void setToolType(String toolType) {
+        this.toolType = toolType;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
 }

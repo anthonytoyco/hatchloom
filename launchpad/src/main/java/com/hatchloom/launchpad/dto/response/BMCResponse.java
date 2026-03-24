@@ -1,10 +1,13 @@
 package com.hatchloom.launchpad.dto.response;
 
-import com.hatchloom.launchpad.model.BusinessModelCanvas;
-
 import java.util.UUID;
 
-/** Response body representing a full Business Model Canvas with all nine sections. */
+import com.hatchloom.launchpad.model.BusinessModelCanvas;
+
+/**
+ * Response body representing a full Business Model Canvas with all nine
+ * sections.
+ */
 public class BMCResponse {
 
     private UUID id;
@@ -41,15 +44,47 @@ public class BMCResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getSideHustleId() { return sideHustleId; }
-    public String getKeyPartners() { return keyPartners; }
-    public String getKeyActivities() { return keyActivities; }
-    public String getKeyResources() { return keyResources; }
-    public String getValuePropositions() { return valuePropositions; }
-    public String getCustomerRelationships() { return customerRelationships; }
-    public String getChannels() { return channels; }
-    public String getCustomerSegments() { return customerSegments; }
-    public String getCostStructure() { return costStructure; }
-    public String getRevenueStreams() { return revenueStreams; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getSideHustleId() {
+        return sideHustleId;
+    }
+
+    public String getKeyPartners() {
+        return keyPartners;
+    }
+
+    public String getKeyActivities() {
+        return keyActivities;
+    }
+
+    public String getKeyResources() {
+        return keyResources;
+    }
+
+    public String getValuePropositions() {
+        return valuePropositions;
+    }
+
+    public String getCustomerRelationships() {
+        return customerRelationships;
+    }
+
+    public String getChannels() {
+        return channels;
+    }
+
+    public String getCustomerSegments() {
+        return customerSegments;
+    }
+
+    public String getCostStructure() {
+        return costStructure;
+    }
+
+    public String getRevenueStreams() {
+        return revenueStreams;
+    }
 }

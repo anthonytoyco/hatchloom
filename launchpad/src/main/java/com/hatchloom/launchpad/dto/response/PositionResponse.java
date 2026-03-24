@@ -1,9 +1,9 @@
 package com.hatchloom.launchpad.dto.response;
 
+import java.util.UUID;
+
 import com.hatchloom.launchpad.model.Position;
 import com.hatchloom.launchpad.model.enums.PositionStatus;
-
-import java.util.UUID;
 
 /** Response body representing a Position. */
 public class PositionResponse {
@@ -30,9 +30,23 @@ public class PositionResponse {
         return r;
     }
 
-    public UUID getId() { return id; }
-    public UUID getSideHustleId() { return sideHustleId; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public PositionStatus getStatus() { return status; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getSideHustleId() {
+        return sideHustleId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public PositionStatus getStatus() {
+        return status;
+    }
 }

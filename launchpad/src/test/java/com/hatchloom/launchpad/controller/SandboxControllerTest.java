@@ -1,32 +1,37 @@
 package com.hatchloom.launchpad.controller;
 
-import com.hatchloom.launchpad.dto.request.CreateSandboxRequest;
-import com.hatchloom.launchpad.dto.request.UpdateSandboxRequest;
-import com.hatchloom.launchpad.dto.response.SandboxResponse;
-import com.hatchloom.launchpad.model.Sandbox;
-import com.hatchloom.launchpad.service.SandboxService;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import com.hatchloom.launchpad.dto.request.CreateSandboxRequest;
+import com.hatchloom.launchpad.dto.request.UpdateSandboxRequest;
+import com.hatchloom.launchpad.dto.response.SandboxResponse;
+import com.hatchloom.launchpad.model.Sandbox;
+import com.hatchloom.launchpad.service.SandboxService;
 
 /**
  * Controller-layer unit tests for {@link SandboxController}.
  *
- * <p>Tests invoke controller methods directly to verify HTTP status codes and
- * service delegation without requiring a running Spring context.</p>
+ * <p>
+ * Tests invoke controller methods directly to verify HTTP status codes and
+ * service delegation without requiring a running Spring context.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class SandboxControllerTest {
