@@ -1,5 +1,15 @@
 package com.hatchloom.launchpad.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.hatchloom.launchpad.dto.request.CreatePositionRequest;
 import com.hatchloom.launchpad.dto.response.PositionResponse;
 import com.hatchloom.launchpad.model.Position;
@@ -8,22 +18,15 @@ import com.hatchloom.launchpad.model.enums.PositionStatus;
 import com.hatchloom.launchpad.repository.PositionRepository;
 import com.hatchloom.launchpad.repository.SideHustleRepository;
 import com.hatchloom.launchpad.state.PositionStateContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service for Position lifecycle operations.
  *
- * <p>Uses the State pattern (via {@link PositionStateContext}) to enforce valid
+ * <p>
+ * Uses the State pattern (via {@link PositionStateContext}) to enforce valid
  * status transitions. Maintains the {@code SideHustle.hasOpenPositions} flag
- * after every create and status-change operation.</p>
+ * after every create and status-change operation.
+ * </p>
  */
 @Service
 public class PositionService {
@@ -36,9 +39,9 @@ public class PositionService {
     private final PositionStateContext positionStateContext;
 
     public PositionService(PositionRepository positionRepository,
-                           SideHustleRepository sideHustleRepository,
-                           SideHustleService sideHustleService,
-                           PositionStateContext positionStateContext) {
+            SideHustleRepository sideHustleRepository,
+            SideHustleService sideHustleService,
+            PositionStateContext positionStateContext) {
         this.positionRepository = positionRepository;
         this.sideHustleRepository = sideHustleRepository;
         this.sideHustleService = sideHustleService;
@@ -51,12 +54,13 @@ public class PositionService {
      *
      * @param sideHustleId the SideHustle UUID
      * @param request      the position creation request
-     * @param callerId     the authenticated student's UUID (must own the SideHustle)
+     * @param callerId     the authenticated student's UUID (must own the
+     *                     SideHustle)
      * @return the created {@link PositionResponse}
      */
     @Transactional
     public PositionResponse createPosition(UUID sideHustleId, CreatePositionRequest request,
-                                           UUID callerId) {
+            UUID callerId) {
         SideHustle sideHustle = sideHustleService.findOrThrow(sideHustleId);
         if (!sideHustle.getStudentId().equals(callerId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
@@ -83,18 +87,27 @@ public class PositionService {
      *
      * @param positionId   the position UUID
      * @param targetStatus the desired new status
+     * @param callerId     the authenticated student's UUID (must own the
+     *                     SideHustle)
      * @return the updated {@link PositionResponse}
-     * @throws IllegalStateException if the transition is invalid for the current state
+     * @throws IllegalStateException if the transition is invalid for the current
+     *                               state
      */
     @Transactional
-    public PositionResponse updatePositionStatus(UUID positionId, PositionStatus targetStatus) {
+    public PositionResponse updatePositionStatus(UUID positionId, PositionStatus targetStatus,
+            UUID callerId) {
         Position position = findOrThrow(positionId);
+        SideHustle sideHustle = position.getSideHustle();
+        if (!sideHustle.getStudentId().equals(callerId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You do not own this SideHustle");
+        }
+
         PositionStatus newStatus = positionStateContext.transition(position.getStatus(), targetStatus);
         position.setStatus(newStatus);
         Position saved = positionRepository.save(position);
 
         // Recalculate the open-positions flag on the parent SideHustle
-        SideHustle sideHustle = position.getSideHustle();
         boolean stillOpen = positionRepository.existsBySideHustle_IdAndStatus(
                 sideHustle.getId(), PositionStatus.OPEN);
         sideHustle.setHasOpenPositions(stillOpen);

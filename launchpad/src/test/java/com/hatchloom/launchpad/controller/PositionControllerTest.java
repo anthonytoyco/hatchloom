@@ -1,5 +1,24 @@
 package com.hatchloom.launchpad.controller;
 
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
+
 import com.hatchloom.launchpad.dto.request.CreatePositionRequest;
 import com.hatchloom.launchpad.dto.request.UpdatePositionStatusRequest;
 import com.hatchloom.launchpad.dto.response.PositionResponse;
@@ -7,21 +26,6 @@ import com.hatchloom.launchpad.model.Position;
 import com.hatchloom.launchpad.model.SideHustle;
 import com.hatchloom.launchpad.model.enums.PositionStatus;
 import com.hatchloom.launchpad.service.PositionService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
-
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Controller-layer unit tests for {@link PositionController}.
@@ -48,7 +52,7 @@ class PositionControllerTest {
         UUID callerId = UUID.randomUUID();
         Jwt jwt = buildJwt(callerId);
 
-        PositionResponse expected = buildPositionResponse(sideHustleId, PositionStatus.OPEN);
+        PositionResponse expected = buildPositionResponse(PositionStatus.OPEN);
         when(positionService.createPosition(eq(sideHustleId), any(), eq(callerId)))
                 .thenReturn(expected);
 
@@ -57,7 +61,7 @@ class PositionControllerTest {
 
         ResponseEntity<PositionResponse> response = controller.createPosition(sideHustleId, request, jwt);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(PositionStatus.OPEN, response.getBody().getStatus());
         // Verify callerId derived from JWT subject was passed correctly
@@ -79,14 +83,17 @@ class PositionControllerTest {
     void updatePositionStatus_delegatesToService_returns200() {
         UUID sideHustleId = UUID.randomUUID();
         UUID positionId = UUID.randomUUID();
-        PositionResponse expected = buildPositionResponse(sideHustleId, PositionStatus.FILLED);
-        when(positionService.updatePositionStatus(eq(positionId), eq(PositionStatus.FILLED)))
+        UUID callerId = UUID.randomUUID();
+        Jwt jwt = buildJwt(callerId);
+        PositionResponse expected = buildPositionResponse(PositionStatus.FILLED);
+        when(positionService.updatePositionStatus(eq(positionId), eq(PositionStatus.FILLED), eq(callerId)))
                 .thenReturn(expected);
 
         UpdatePositionStatusRequest request = new UpdatePositionStatusRequest();
         request.setStatus(PositionStatus.FILLED);
 
-        ResponseEntity<PositionResponse> response = controller.updatePositionStatus(sideHustleId, positionId, request);
+        ResponseEntity<PositionResponse> response = controller.updatePositionStatus(sideHustleId, positionId, request,
+                jwt);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(PositionStatus.FILLED, response.getBody().getStatus());
@@ -122,8 +129,10 @@ class PositionControllerTest {
         CreatePositionRequest request = new CreatePositionRequest();
         request.setTitle("Role");
 
-        assertThrows(org.springframework.web.server.ResponseStatusException.class,
+        org.springframework.web.server.ResponseStatusException ex = assertThrows(
+                org.springframework.web.server.ResponseStatusException.class,
                 () -> controller.createPosition(sideHustleId, request, jwt));
+        assertEquals(HttpStatus.FORBIDDEN.value(), ex.getStatusCode().value());
     }
 
     // ---- helpers ----
@@ -135,7 +144,7 @@ class PositionControllerTest {
                 .build();
     }
 
-    private PositionResponse buildPositionResponse(UUID sideHustleId, PositionStatus status) {
+    private PositionResponse buildPositionResponse(PositionStatus status) {
         SideHustle sh = new SideHustle();
         sh.setStudentId(UUID.randomUUID());
         sh.setTitle("Parent Hustle");

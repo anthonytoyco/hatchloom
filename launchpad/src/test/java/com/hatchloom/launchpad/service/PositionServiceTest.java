@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,11 @@ class PositionServiceTest {
 
     @InjectMocks
     private PositionService positionService;
+
+    @Test
+    void stateContext_isInitialized() {
+        assertNotNull(positionStateContext);
+    }
 
     /**
      * TC-Q2-003 main path: position is created with OPEN status and the parent
@@ -140,7 +146,9 @@ class PositionServiceTest {
     @Test
     void updatePositionStatus_openToFilled_transitionsViaStatePattern() {
         UUID positionId = UUID.randomUUID();
+        UUID callerId = UUID.randomUUID();
         SideHustle sideHustle = new SideHustle();
+        sideHustle.setStudentId(callerId);
         sideHustle.setHasOpenPositions(true);
 
         Position position = new Position();
@@ -153,7 +161,7 @@ class PositionServiceTest {
                 .thenReturn(false);
         when(sideHustleRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        PositionResponse response = positionService.updatePositionStatus(positionId, PositionStatus.FILLED);
+        PositionResponse response = positionService.updatePositionStatus(positionId, PositionStatus.FILLED, callerId);
 
         assertEquals(PositionStatus.FILLED, response.getStatus());
         assertFalse(sideHustle.isHasOpenPositions());
@@ -167,7 +175,9 @@ class PositionServiceTest {
     @Test
     void updatePositionStatus_filledToFilled_throwsIllegalState() {
         UUID positionId = UUID.randomUUID();
+        UUID callerId = UUID.randomUUID();
         SideHustle sideHustle = new SideHustle();
+        sideHustle.setStudentId(callerId);
 
         Position position = new Position();
         position.setSideHustle(sideHustle);
@@ -175,8 +185,9 @@ class PositionServiceTest {
 
         when(positionRepository.findById(positionId)).thenReturn(Optional.of(position));
 
-        assertThrows(IllegalStateException.class,
-                () -> positionService.updatePositionStatus(positionId, PositionStatus.FILLED));
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> positionService.updatePositionStatus(positionId, PositionStatus.FILLED, callerId));
+        assertNotNull(ex.getMessage());
     }
 
     /**
@@ -187,7 +198,9 @@ class PositionServiceTest {
     @Test
     void updatePositionStatus_targetIsOpen_throwsIllegalArgument() {
         UUID positionId = UUID.randomUUID();
+        UUID callerId = UUID.randomUUID();
         SideHustle sideHustle = new SideHustle();
+        sideHustle.setStudentId(callerId);
 
         Position position = new Position();
         position.setSideHustle(sideHustle);
@@ -195,7 +208,28 @@ class PositionServiceTest {
 
         when(positionRepository.findById(positionId)).thenReturn(Optional.of(position));
 
-        assertThrows(IllegalArgumentException.class,
-                () -> positionService.updatePositionStatus(positionId, PositionStatus.OPEN));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> positionService.updatePositionStatus(positionId, PositionStatus.OPEN, callerId));
+        assertNotNull(ex.getMessage());
+    }
+
+    @Test
+    void updatePositionStatus_callerNotOwner_returns403() {
+        UUID positionId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        UUID callerId = UUID.randomUUID();
+
+        SideHustle sideHustle = new SideHustle();
+        sideHustle.setStudentId(ownerId);
+
+        Position position = new Position();
+        position.setSideHustle(sideHustle);
+        position.setStatus(PositionStatus.OPEN);
+
+        when(positionRepository.findById(positionId)).thenReturn(Optional.of(position));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> positionService.updatePositionStatus(positionId, PositionStatus.FILLED, callerId));
+        assertEquals(403, ex.getStatusCode().value());
     }
 }

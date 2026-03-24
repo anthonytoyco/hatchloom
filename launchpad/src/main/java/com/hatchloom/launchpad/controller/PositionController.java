@@ -3,7 +3,6 @@ package com.hatchloom.launchpad.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -45,8 +44,7 @@ public class PositionController {
             @Valid @RequestBody CreatePositionRequest request,
             @AuthenticationPrincipal Jwt jwt) {
         UUID callerId = UUID.fromString(jwt.getSubject());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(positionService.createPosition(sideHustleId, request, callerId));
+        return ResponseEntity.ok(positionService.createPosition(sideHustleId, request, callerId));
     }
 
     @GetMapping("/launchpad/sidehustles/{sideHustleId}/positions")
@@ -57,8 +55,10 @@ public class PositionController {
     @PutMapping("/launchpad/sidehustles/{sideHustleId}/positions/{positionId}/status")
     public ResponseEntity<PositionResponse> updatePositionStatus(@PathVariable UUID sideHustleId,
             @PathVariable UUID positionId,
-            @Valid @RequestBody UpdatePositionStatusRequest request) {
-        return ResponseEntity.ok(positionService.updatePositionStatus(positionId, request.getStatus()));
+            @Valid @RequestBody UpdatePositionStatusRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID callerId = UUID.fromString(jwt.getSubject());
+        return ResponseEntity.ok(positionService.updatePositionStatus(positionId, request.getStatus(), callerId));
     }
 
     /**
