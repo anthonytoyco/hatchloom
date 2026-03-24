@@ -1,34 +1,28 @@
-@startuml
+@startuml sequence_home
 title LaunchPad Home Aggregation Sequence
 
-actor Student as User
-participant "Client App" as Client
-participant "LaunchPadHomeController" as HomeController
-participant "LaunchPadAggregator\n(Facade)" as Aggregator
-participant "SandboxService" as Sandbox
-participant "SideHustleService" as SideHustle
-database "LaunchPad Data Store" as DB
+actor User
+participant Client
+participant "Server\n(LaunchPadHomeController)" as Server
+participant "Aggregator\n(LaunchPadAggregator)" as Aggregator
+participant "SandboxService" as SandboxService
+participant "SideHustleService" as SideHustleService
+database Database
 
-User -> Client: Visit LaunchPad home
-Client -> HomeController: GET /launchpad/home/{userId}\nAuthorization: Bearer <jwt>
-note right of HomeController
-	JWT is validated before controller handling.
-end note
-HomeController -> Aggregator: getHomeView(userId)
-
-Aggregator -> Sandbox: listByStudent(userId)
-Sandbox -> DB: query sandboxes by student_id
-DB --> Sandbox: sandbox rows
-Sandbox --> Aggregator: sandbox summaries
-
-Aggregator -> SideHustle: listByStudent(userId)
-SideHustle -> DB: query side_hustles by student_id
-DB --> SideHustle: side_hustle rows
-SideHustle --> Aggregator: side_hustle summaries\n(with hasOpenPositions)
-
-Aggregator -> Aggregator: compose LaunchPadHomeView\ninTheLabCount = sandboxes.size()\nliveVenturesCount = count(status=LIVE_VENTURE)
-Aggregator --> HomeController: LaunchPadHomeView
-HomeController --> Client: 200 OK + aggregated home JSON
-Client --> User: Display LaunchPad overview
+User -> Client: 1 Visits LaunchPad page
+Client -> Server: 2 Send GET /launchpad/home/{userId} (Bearer JWT)
+Server -> Aggregator: 3 getHomeView(userId)
+Aggregator -> SandboxService: 4 listByStudent(userId)
+SandboxService -> Database: 5 Query sandboxes by student_id
+Database --> SandboxService: 6 Sandbox rows
+SandboxService --> Aggregator: 7 Sandbox summaries
+Aggregator -> SideHustleService: 8 listByStudent(userId)
+SideHustleService -> Database: 9 Query side_hustles by student_id
+Database --> SideHustleService: 10 SideHustle rows (includes has_open_positions)
+SideHustleService --> Aggregator: 11 SideHustle summaries
+Aggregator -> Aggregator: 12 Compute inTheLabCount=sandboxes.size()\nliveVenturesCount=count(status=LIVE_VENTURE)
+Aggregator --> Server: 13 LaunchPadHomeView
+Server --> Client: 14 Return 200 + aggregated home JSON
+Client --> User: 15 Display LaunchPad home with In-the-Lab\nand Live Ventures counts
 
 @enduml

@@ -1,64 +1,57 @@
-@startuml
-title LaunchPad Service Component Diagram
+@startuml component_launchpad
+title LaunchPad Service:
 left to right direction
 
-package "LaunchPad Service" {
+interface "LaunchPad Interface" as API
 
-  [LaunchPad Interface\n(REST Controllers)] as API
-
-  component "LaunchPadAggregator\n(Facade)" as Aggregator
-  component "Sandbox Module\nSandboxService + SandboxToolService" as SandboxModule
-  component "SideHustle Module\nSideHustleService" as SideHustleModule
-  component "BMC Module\nBMCService" as BMCModule
-  component "Team Module\nTeamService" as TeamModule
-  component "Position Module\nPositionService" as PositionModule
-  component "Security Module\nJWT Resource Server" as SecurityModule
-
-  database "LaunchPad Data Store\n(sandboxes, sandbox_tools, side_hustles,\nbmc_sections, teams, team_members, positions)" as LaunchPadDB
+rectangle "LaunchPad Service" {
+  component "Aggregator\n(home view: counts, open-position flags)" as Aggregator
+  component "Sandbox Module\n(Sandbox CRUD)" as SandboxModule
+  component "SideHustle Module\n(SideHustle CRUD; parent of BMC, Team, Positions)" as SideHustleModule
+  component "Position Module\n(OPEN -> FILLED | CLOSED)" as PositionModule
+  component "BMC Module\n(edit 9 BMC sections)" as BMCModule
+  component "Team Module\n(member add, remove, list)" as TeamModule
+  component "Factory Module\n(SideHustleFactoryProvider)" as FactoryModule
+  component "State Module\n(PositionStateContext)" as StateModule
+  component "Security Module\n(JWT resource server)" as SecurityModule
 }
 
-component "Position Status Interface\nGET /launchpad/positions/{id}/status" as PositionStatusInterface
+database "LaunchPad Data Store\n(sandboxes, sandbox_tools, side_hustles, bmc_sections\nteams, team_members, positions)" as LaunchPadDB
+interface "Position Status Interface" as PositionStatusInterface
+component "Auth Service\n(JWT issuer)" as AuthService
 component "ConnectHub Classifieds" as ConnectHub
-component "Auth Service\nJWT Issuer" as AuthService
 
-API --> SecurityModule : all requests
-SecurityModule --> AuthService : validate JWT issuer/signature
+API --> SecurityModule : validate token
+SecurityModule --> AuthService : verify issuer/signature
 
-API --> Aggregator : /launchpad/home/{userId}
-API --> SandboxModule : sandbox + tool CRUD
-API --> SideHustleModule : sidehustle CRUD
-API --> BMCModule : get + patch BMC
-API --> TeamModule : team member CRUD
-API --> PositionModule : position create/list/update
-API --> PositionStatusInterface : public status read
+API --> Aggregator : home
+API --> SandboxModule : sandbox CRUD
+API --> SideHustleModule : sideHustle CRUD
+API --> PositionModule : position CRUD
+API --> BMCModule : BMC edit
+API --> TeamModule : team CRUD
 
-Aggregator --> SandboxModule : listByStudent
-Aggregator --> SideHustleModule : listByStudent
+Aggregator --> SandboxModule : aggregate
+Aggregator --> SideHustleModule : aggregate
+Aggregator ..> PositionModule : open flags sourced from status state
+SideHustleModule --> PositionModule : owns
+SideHustleModule --> BMCModule : owns
+SideHustleModule --> TeamModule : owns
+SideHustleModule --> FactoryModule : select factory by SideHustle type
+PositionModule --> StateModule : validate status transitions
 
-SideHustleModule --> LaunchPadDB : read/write side_hustles
-SideHustleModule --> LaunchPadDB : auto-create bmc_sections + teams
-SandboxModule --> LaunchPadDB : read/write sandboxes + sandbox_tools
-BMCModule --> LaunchPadDB : read/write bmc_sections
-TeamModule --> LaunchPadDB : read/write teams + team_members
-PositionModule --> LaunchPadDB : read/write positions
-PositionModule --> LaunchPadDB : maintain has_open_positions
+SandboxModule --> LaunchPadDB
+SideHustleModule --> LaunchPadDB
+PositionModule --> LaunchPadDB
+BMCModule --> LaunchPadDB
+TeamModule --> LaunchPadDB
 
-PositionStatusInterface --> PositionModule : delegate get status
-ConnectHub --> PositionStatusInterface : consume public endpoint
+PositionStatusInterface --> PositionModule : read position status
+ConnectHub --> PositionStatusInterface : consumed by classifieds
 
-note right of SideHustleModule
-  On SideHustle creation:
-  - SideHustleFactoryProvider selects subtype by status
-  - Empty BMC is created
-  - Empty Team is created
-end note
-
-note right of PositionModule
-  Uses PositionStateContext.
-  State transitions:
-  OPEN -> FILLED
-  OPEN -> CLOSED
-  FILLED/CLOSED are terminal
+note right of PositionStatusInterface
+Public endpoint:
+GET /launchpad/positions/{positionId}/status
 end note
 
 @enduml

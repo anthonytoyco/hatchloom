@@ -1,57 +1,30 @@
-@startuml
-title Hatchloom System Overview Component Diagram
+@startuml component_overview
+title Hatchloom System Overview:
 top to bottom direction
 
 actor "Student / Teacher\nParent / Admin\nEntrepreneur" as User
 
-component "Client Application\n(Web / Mobile UI)" as Client
-component "API Gateway" as Gateway
+component "Client Application (Web / Mobile UI)" as Client
+component "API Gateway\n(Routes requests, validates session, enforces RBAC)" as Gateway
+component "Auth & User Profile Service\n(register, login, session, profile)" as Auth
+component "LaunchPad Service\n(sandbox, sideHustle, BMC, team, position)" as LaunchPad
+component "ConnectHub Service\n(feed, classifieds, messaging)" as ConnectHub
 
-component "Auth & User Profile Service" as Auth
-component "LaunchPad Service" as LaunchPad
-component "ConnectHub Service" as ConnectHub
+database "Persistent Data Store\n(users, sessions, profiles, parent_student_links\nsandboxes, sandbox_tools, side_hustles, bmc_sections\nteams, team_members, positions\nfeed_posts, classified_posts, messages, threads, connections)" as DB
 
-database "Persistent Data Store\n(users, sessions, profiles,\nsandboxes, sandbox_tools, side_hustles,\nbmc_sections, teams, team_members, positions,\nfeed_posts, classified_posts, messages)" as DB
-
-interface "Position Status Interface\nGET /launchpad/positions/{id}/status" as PositionStatus
+interface "Position Status Interface" as PositionStatus
 
 User --> Client
-Client --> Gateway : HTTP requests
-
-Gateway --> Auth : auth + profile operations
+Client --> Gateway : HTTP Requests
+Gateway --> Auth : auth / profile
 Gateway --> LaunchPad : LaunchPad APIs
 Gateway --> ConnectHub : ConnectHub APIs
 
-Auth --> DB : read/write users + sessions + profiles
-LaunchPad --> DB : read/write LaunchPad tables
-ConnectHub --> DB : read/write feed + classifieds + messages
+Auth --> DB : read / write
+LaunchPad --> DB : read / write
+ConnectHub --> DB : read / write
 
 LaunchPad - PositionStatus
-ConnectHub --> PositionStatus : read current position state
-
-note right of Gateway
-  Routes requests, validates session,
-  and enforces RBAC.
-end note
-
-note right of Auth
-  Registration, login, token/session,
-  and user profile management.
-end note
-
-note right of LaunchPad
-  Sandbox, SideHustle, BMC,
-  team, and position modules.
-end note
-
-note right of ConnectHub
-  Feed, classifieds, and messaging.
-end note
-
-note right of ConnectHub
-  Classifieds consult LaunchPad
-  position status to determine
-  OPEN/FILLED/CLOSED behavior.
-end note
+ConnectHub ..> PositionStatus : <<uses>> Classifieds reads Position status
 
 @enduml
