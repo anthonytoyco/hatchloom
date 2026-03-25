@@ -1,20 +1,31 @@
-import { Button } from "@/components/ui/button"
+import { LaunchPadHome } from "@/pages/LaunchPadHome"
+import { SandboxDetail } from "@/pages/SandboxDetail"
+import { SideHustleDetail } from "@/pages/SideHustleDetail"
+import { StudentHome } from "@/pages/StudentHome"
+import { ToolPage } from "@/pages/ToolPage"
+import { BrowserRouter, Route, Routes } from "react-router"
 
 export function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<StudentHome />} />
+        <Route path="/launchpad" element={<LaunchPadHome />} />
+        <Route
+          path="/launchpad/sandboxes/:sandboxId"
+          element={<SandboxDetail />}
+        />
+        <Route
+          path="/launchpad/sidehustles/:sideHustleId"
+          element={<SideHustleDetail />}
+        />
+        <Route
+          path="/launchpad/sandboxes/:sandboxId/tools/:toolType"
+          element={<ToolPage />}
+        />
+        {/* Additional routes added as pages are built */}
+      </Routes>
+    </BrowserRouter>
   )
 }
 
