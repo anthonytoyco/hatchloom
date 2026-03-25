@@ -2,11 +2,31 @@ const BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
   "http://localhost:8082"
 
+function getCookie(name: string): string | null {
+  const match = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`))
+  return match ? decodeURIComponent(match.split("=").slice(1).join("=")) : null
+}
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem("access_token") ?? getCookie("access_token")
+}
+
+export function getStoredUser(): { userId: string; username: string; role: string } | null {
+  const raw = localStorage.getItem("user") ?? getCookie("user")
+  try {
+    return raw ? (JSON.parse(raw) as { userId: string; username: string; role: string }) : null
+  } catch {
+    return null
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const token = localStorage.getItem("auth_token")
+  const token = getAuthToken()
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
