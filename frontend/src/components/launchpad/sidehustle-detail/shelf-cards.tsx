@@ -4,6 +4,7 @@ import type {
 } from "@/components/launchpad/sidehustle-detail/demo-data"
 import { cn } from "@/lib/utils"
 import type { ReactNode } from "react"
+import { toast } from "sonner"
 
 export function ShelfRow({
   title,
@@ -14,6 +15,20 @@ export function ShelfRow({
   action?: string
   children: ReactNode
 }) {
+  function showShelfActionPlaceholder() {
+    const messageByTitle: Record<string, string> = {
+      "📌 Tagged Resources":
+        "Placeholder: SideHustle Tagged Resources action is not wired yet.",
+      "📡 Active Channels":
+        "Placeholder: SideHustle Active Channels management is not wired yet.",
+    }
+
+    toast.info(
+      messageByTitle[title] ??
+        "Placeholder: this shelf action is not wired yet."
+    )
+  }
+
   return (
     <div className="mb-5">
       <div className="mb-1.5 flex items-center justify-between">
@@ -21,7 +36,10 @@ export function ShelfRow({
           {title}
         </span>
         {action && (
-          <button className="font-heading text-[0.65rem] font-bold text-hatch-pink hover:opacity-80">
+          <button
+            onClick={showShelfActionPlaceholder}
+            className="font-heading text-[0.65rem] font-bold text-hatch-pink hover:opacity-80"
+          >
             {action}
           </button>
         )}

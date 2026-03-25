@@ -1,4 +1,7 @@
-import { LAUNCHPAD_SIDEBAR_SECTIONS } from "@/components/launchpad/navigation"
+import {
+  CreateSandboxDialog,
+  CreateSideHustleDialog,
+} from "@/components/launchpad/home/create-dialogs"
 import {
   NewTile,
   SandboxTile,
@@ -6,10 +9,7 @@ import {
   SkeletonTile,
   StatusBar,
 } from "@/components/launchpad/home/home-cards"
-import {
-  CreateSandboxDialog,
-  CreateSideHustleDialog,
-} from "@/components/launchpad/home/create-dialogs"
+import { LAUNCHPAD_SIDEBAR_SECTIONS } from "@/components/launchpad/navigation"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Badge } from "@/components/ui/badge"
 import { useLaunchPadHome } from "@/hooks/use-launchpad-home"
@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router"
+import { toast } from "sonner"
 
 const FEATURED_TOOLS = [
   {
@@ -102,7 +103,14 @@ export function LaunchPadHome() {
                 {launchpad ? `${launchpad.sandboxes.length} projects` : "…"}
               </span>
             </div>
-            <button className="font-heading text-[0.75rem] font-bold text-hatch-pink transition-opacity hover:opacity-70">
+            <button
+              onClick={() =>
+                toast.info(
+                  "My Sandboxes listing is not wired yet. Placeholder: this will open the full sandboxes index."
+                )
+              }
+              className="font-heading text-[0.75rem] font-bold text-hatch-pink transition-opacity hover:opacity-70"
+            >
               See all <ChevronRight className="inline size-3.5" />
             </button>
           </div>
@@ -138,7 +146,14 @@ export function LaunchPadHome() {
                 {launchpad ? `${launchpad.sideHustles.length} active` : "…"}
               </span>
             </div>
-            <button className="font-heading text-[0.75rem] font-bold text-hatch-pink transition-opacity hover:opacity-70">
+            <button
+              onClick={() =>
+                toast.info(
+                  "My SideHustles listing is not wired yet. Placeholder: this will open the full side hustles index."
+                )
+              }
+              className="font-heading text-[0.75rem] font-bold text-hatch-pink transition-opacity hover:opacity-70"
+            >
               See all <ChevronRight className="inline size-3.5" />
             </button>
           </div>

@@ -6,8 +6,8 @@
 
 All endpoints require `Authorization: Bearer <token>` **except**:
 
-| Endpoint | Reason |
-|---|---|
+| Endpoint                                       | Reason                                                    |
+| ---------------------------------------------- | --------------------------------------------------------- |
 | `GET /launchpad/positions/{positionId}/status` | Public - Position Status Interface consumed by ConnectHub |
 
 Tokens are JWTs issued by the Auth service (`http://localhost:8081` locally, `http://auth:8081` in Docker). LaunchPad validates but does not issue tokens.
@@ -34,8 +34,8 @@ Returns the aggregated home view for a student (Facade pattern via `LaunchPadAgg
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name     | Type | Description           |
+| -------- | ---- | --------------------- |
 | `userId` | UUID | The student's user ID |
 
 **Success response - 200 OK**
@@ -44,9 +44,7 @@ Returns the aggregated home view for a student (Facade pattern via `LaunchPadAgg
 {
   "inTheLabCount": 2,
   "liveVenturesCount": 1,
-  "sandboxes": [
-    { "id": "uuid", "title": "My Sandbox" }
-  ],
+  "sandboxes": [{ "id": "uuid", "title": "My Sandbox" }],
   "sideHustles": [
     {
       "id": "uuid",
@@ -60,9 +58,9 @@ Returns the aggregated home view for a student (Facade pattern via `LaunchPadAgg
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
 
 ---
 
@@ -82,11 +80,11 @@ Creates a new Sandbox for a student.
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `studentId` | UUID | Yes | - |
-| `title` | String | Yes | max 255 characters |
-| `description` | String | No | - |
+| Field         | Type   | Required | Constraints        |
+| ------------- | ------ | -------- | ------------------ |
+| `studentId`   | UUID   | Yes      | -                  |
+| `title`       | String | Yes      | max 255 characters |
+| `description` | String | No       | -                  |
 
 **Success response - 201 Created**
 
@@ -103,10 +101,10 @@ Creates a new Sandbox for a student.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Missing `studentId` or blank/oversized `title` |
-| 401 | Missing or invalid Bearer token |
+| Code | Condition                                      |
+| ---- | ---------------------------------------------- |
+| 400  | Missing `studentId` or blank/oversized `title` |
+| 401  | Missing or invalid Bearer token                |
 
 ---
 
@@ -116,8 +114,8 @@ Returns a single Sandbox by ID.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description    |
+| ----------- | ---- | -------------- |
 | `sandboxId` | UUID | The Sandbox ID |
 
 **Success response - 200 OK**
@@ -135,10 +133,10 @@ Returns a single Sandbox by ID.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | Sandbox not found               |
 
 ---
 
@@ -148,8 +146,8 @@ Updates a Sandbox's title and/or description.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description    |
+| ----------- | ---- | -------------- |
 | `sandboxId` | UUID | The Sandbox ID |
 
 **Request body**
@@ -176,32 +174,38 @@ Updates a Sandbox's title and/or description.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Blank or oversized `title` |
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 400  | Blank or oversized `title`      |
+| 401  | Missing or invalid Bearer token |
+| 404  | Sandbox not found               |
 
 ---
 
 #### `DELETE /launchpad/sandboxes/{sandboxId}`
 
-Deletes a Sandbox. Cascades to all associated SandboxTools.
+Deletes a Sandbox.
+
+Cascade behavior:
+
+- Deletes all associated `SandboxTools`
+- Deletes all `SideHustles` linked to that sandbox
+- SideHustle deletion then cascades to `BusinessModelCanvas`, `Team`, `TeamMembers`, and `Positions`
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description    |
+| ----------- | ---- | -------------- |
 | `sandboxId` | UUID | The Sandbox ID |
 
 **Success response - 204 No Content**
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | Sandbox not found               |
 
 ---
 
@@ -211,9 +215,9 @@ Returns all Sandboxes owned by a student.
 
 **Query parameters**
 
-| Name | Type | Required | Description |
-|---|---|---|---|
-| `studentId` | UUID | Yes | The student's user ID |
+| Name        | Type | Required | Description           |
+| ----------- | ---- | -------- | --------------------- |
+| `studentId` | UUID | Yes      | The student's user ID |
 
 **Success response - 200 OK**
 
@@ -232,9 +236,9 @@ Returns all Sandboxes owned by a student.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
 
 ---
 
@@ -246,8 +250,8 @@ Adds a tool to a Sandbox.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description           |
+| ----------- | ---- | --------------------- |
 | `sandboxId` | UUID | The parent Sandbox ID |
 
 **Request body**
@@ -259,10 +263,10 @@ Adds a tool to a Sandbox.
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `toolType` | String | Yes | max 100 characters |
-| `data` | String | No | Arbitrary JSON or text payload |
+| Field      | Type   | Required | Constraints                    |
+| ---------- | ------ | -------- | ------------------------------ |
+| `toolType` | String | Yes      | max 100 characters             |
+| `data`     | String | No       | Arbitrary JSON or text payload |
 
 **Success response - 201 Created**
 
@@ -278,11 +282,11 @@ Adds a tool to a Sandbox.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Blank or oversized `toolType` |
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 400  | Blank or oversized `toolType`   |
+| 401  | Missing or invalid Bearer token |
+| 404  | Sandbox not found               |
 
 ---
 
@@ -292,8 +296,8 @@ Returns all tools for a Sandbox.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description           |
+| ----------- | ---- | --------------------- |
 | `sandboxId` | UUID | The parent Sandbox ID |
 
 **Success response - 200 OK**
@@ -312,10 +316,10 @@ Returns all tools for a Sandbox.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | Sandbox not found               |
 
 ---
 
@@ -325,10 +329,10 @@ Updates the data payload of a SandboxTool.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description           |
+| ----------- | ---- | --------------------- |
 | `sandboxId` | UUID | The parent Sandbox ID |
-| `toolId` | UUID | The SandboxTool ID |
+| `toolId`    | UUID | The SandboxTool ID    |
 
 **Request body**
 
@@ -352,10 +356,10 @@ Updates the data payload of a SandboxTool.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox or SandboxTool not found |
+| Code | Condition                        |
+| ---- | -------------------------------- |
+| 401  | Missing or invalid Bearer token  |
+| 404  | Sandbox or SandboxTool not found |
 
 ---
 
@@ -365,19 +369,19 @@ Removes a tool from a Sandbox.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name        | Type | Description           |
+| ----------- | ---- | --------------------- |
 | `sandboxId` | UUID | The parent Sandbox ID |
-| `toolId` | UUID | The SandboxTool ID |
+| `toolId`    | UUID | The SandboxTool ID    |
 
 **Success response - 204 No Content**
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | Sandbox or SandboxTool not found |
+| Code | Condition                        |
+| ---- | -------------------------------- |
+| 401  | Missing or invalid Bearer token  |
+| 404  | Sandbox or SandboxTool not found |
 
 ---
 
@@ -399,13 +403,13 @@ Creates a new SideHustle using the Factory Method pattern. Auto-creates an empty
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `studentId` | UUID | Yes | - |
-| `sandboxId` | UUID | Yes | Must reference an existing Sandbox: 400 if absent |
-| `title` | String | Yes | max 255 characters |
-| `description` | String | No | - |
-| `type` | SideHustleStatus | Yes | `IN_THE_LAB` or `LIVE_VENTURE` |
+| Field         | Type             | Required | Constraints                                       |
+| ------------- | ---------------- | -------- | ------------------------------------------------- |
+| `studentId`   | UUID             | Yes      | -                                                 |
+| `sandboxId`   | UUID             | Yes      | Must reference an existing Sandbox: 400 if absent |
+| `title`       | String           | Yes      | max 255 characters                                |
+| `description` | String           | No       | -                                                 |
+| `type`        | SideHustleStatus | Yes      | `IN_THE_LAB` or `LIVE_VENTURE`                    |
 
 **Success response - 201 Created**
 
@@ -425,11 +429,11 @@ Creates a new SideHustle using the Factory Method pattern. Auto-creates an empty
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Missing/blank `title`, missing `sandboxId`, missing/invalid `type`, or `studentId` absent |
-| 401 | Missing or invalid Bearer token |
-| 404 | Referenced `sandboxId` does not exist |
+| Code | Condition                                                                                 |
+| ---- | ----------------------------------------------------------------------------------------- |
+| 400  | Missing/blank `title`, missing `sandboxId`, missing/invalid `type`, or `studentId` absent |
+| 401  | Missing or invalid Bearer token                                                           |
+| 404  | Referenced `sandboxId` does not exist                                                     |
 
 ---
 
@@ -439,8 +443,8 @@ Returns a single SideHustle by ID.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description       |
+| -------------- | ---- | ----------------- |
 | `sideHustleId` | UUID | The SideHustle ID |
 
 **Success response - 200 OK**
@@ -461,10 +465,10 @@ Returns a single SideHustle by ID.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -474,8 +478,8 @@ Updates a SideHustle's title and/or description (metadata only).
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description       |
+| -------------- | ---- | ----------------- |
 | `sideHustleId` | UUID | The SideHustle ID |
 
 **Request body**
@@ -505,11 +509,11 @@ Updates a SideHustle's title and/or description (metadata only).
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Blank or oversized `title` |
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 400  | Blank or oversized `title`      |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -519,18 +523,18 @@ Deletes a SideHustle. Cascades to its BMC, Team, TeamMembers, and Positions.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description       |
+| -------------- | ---- | ----------------- |
 | `sideHustleId` | UUID | The SideHustle ID |
 
 **Success response - 204 No Content**
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -540,9 +544,9 @@ Returns all SideHustles owned by a student.
 
 **Query parameters**
 
-| Name | Type | Required | Description |
-|---|---|---|---|
-| `studentId` | UUID | Yes | The student's user ID |
+| Name        | Type | Required | Description           |
+| ----------- | ---- | -------- | --------------------- |
+| `studentId` | UUID | Yes      | The student's user ID |
 
 **Success response - 200 OK**
 
@@ -564,9 +568,9 @@ Returns all SideHustles owned by a student.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
 
 ---
 
@@ -578,8 +582,8 @@ Returns the full Business Model Canvas for a SideHustle.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Success response - 200 OK**
@@ -602,10 +606,10 @@ Returns the full Business Model Canvas for a SideHustle.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -615,8 +619,8 @@ Updates a single BMC section. The caller must own the SideHustle (validated via 
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Request body**
@@ -628,35 +632,35 @@ Updates a single BMC section. The caller must own the SideHustle (validated via 
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `section` | String | Yes | Must be one of the 9 valid keys (case-insensitive) |
-| `content` | String | No | Replaces the current section content |
+| Field     | Type   | Required | Constraints                                        |
+| --------- | ------ | -------- | -------------------------------------------------- |
+| `section` | String | Yes      | Must be one of the 9 valid keys (case-insensitive) |
+| `content` | String | No       | Replaces the current section content               |
 
 **Valid section keys:**
 
-| Key | Description |
-|---|---|
-| `key_partners` | Key Partners |
-| `key_activities` | Key Activities |
-| `key_resources` | Key Resources |
-| `value_propositions` | Value Propositions |
+| Key                      | Description            |
+| ------------------------ | ---------------------- |
+| `key_partners`           | Key Partners           |
+| `key_activities`         | Key Activities         |
+| `key_resources`          | Key Resources          |
+| `value_propositions`     | Value Propositions     |
 | `customer_relationships` | Customer Relationships |
-| `channels` | Channels |
-| `customer_segments` | Customer Segments |
-| `cost_structure` | Cost Structure |
-| `revenue_streams` | Revenue Streams |
+| `channels`               | Channels               |
+| `customer_segments`      | Customer Segments      |
+| `cost_structure`         | Cost Structure         |
+| `revenue_streams`        | Revenue Streams        |
 
 **Success response - 200 OK** - full BMC object (same schema as GET)
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Blank `section` or unrecognised section key |
-| 401 | Missing or invalid Bearer token |
-| 403 | Caller does not own the SideHustle |
-| 404 | SideHustle not found |
+| Code | Condition                                   |
+| ---- | ------------------------------------------- |
+| 400  | Blank `section` or unrecognised section key |
+| 401  | Missing or invalid Bearer token             |
+| 403  | Caller does not own the SideHustle          |
+| 404  | SideHustle not found                        |
 
 ---
 
@@ -668,8 +672,8 @@ Adds a member to the SideHustle team. The caller must own the SideHustle (valida
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Request body**
@@ -681,10 +685,10 @@ Adds a member to the SideHustle team. The caller must own the SideHustle (valida
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `userId` | UUID | Yes | The user to add to the team |
-| `role` | String | No | Free-text role label |
+| Field    | Type   | Required | Constraints                 |
+| -------- | ------ | -------- | --------------------------- |
+| `userId` | UUID   | Yes      | The user to add to the team |
+| `role`   | String | No       | Free-text role label        |
 
 **Success response - 201 Created**
 
@@ -700,12 +704,12 @@ Adds a member to the SideHustle team. The caller must own the SideHustle (valida
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Missing `userId` |
-| 401 | Missing or invalid Bearer token |
-| 403 | Caller does not own the SideHustle |
-| 404 | SideHustle not found |
+| Code | Condition                          |
+| ---- | ---------------------------------- |
+| 400  | Missing `userId`                   |
+| 401  | Missing or invalid Bearer token    |
+| 403  | Caller does not own the SideHustle |
+| 404  | SideHustle not found               |
 
 ---
 
@@ -715,8 +719,8 @@ Returns all members of the SideHustle team.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Success response - 200 OK**
@@ -735,10 +739,10 @@ Returns all members of the SideHustle team.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -748,19 +752,19 @@ Removes a member from the SideHustle team.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
-| `sideHustleId` | UUID | The parent SideHustle ID |
-| `userId` | UUID | The user ID of the member to remove |
+| Name           | Type | Description                         |
+| -------------- | ---- | ----------------------------------- |
+| `sideHustleId` | UUID | The parent SideHustle ID            |
+| `userId`       | UUID | The user ID of the member to remove |
 
 **Success response - 204 No Content**
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle or team member not found |
+| Code | Condition                           |
+| ---- | ----------------------------------- |
+| 401  | Missing or invalid Bearer token     |
+| 404  | SideHustle or team member not found |
 
 ---
 
@@ -772,8 +776,8 @@ Creates a new Position for a SideHustle. Positions start with status `OPEN`. The
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Request body**
@@ -799,12 +803,12 @@ Creates a new Position for a SideHustle. Positions start with status `OPEN`. The
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Blank or oversized `title` |
-| 401 | Missing or invalid Bearer token |
-| 403 | Caller does not own the SideHustle |
-| 404 | SideHustle not found |
+| Code | Condition                          |
+| ---- | ---------------------------------- |
+| 400  | Blank or oversized `title`         |
+| 401  | Missing or invalid Bearer token    |
+| 403  | Caller does not own the SideHustle |
+| 404  | SideHustle not found               |
 
 ---
 
@@ -814,8 +818,8 @@ Returns all Positions for a SideHustle.
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
 
 **Success response - 200 OK**
@@ -834,10 +838,10 @@ Returns all Positions for a SideHustle.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 401 | Missing or invalid Bearer token |
-| 404 | SideHustle not found |
+| Code | Condition                       |
+| ---- | ------------------------------- |
+| 401  | Missing or invalid Bearer token |
+| 404  | SideHustle not found            |
 
 ---
 
@@ -845,19 +849,19 @@ Returns all Positions for a SideHustle.
 
 Transitions a Position to a new status (State pattern). Valid transitions:
 
-| From | To | Allowed |
-|---|---|---|
-| `OPEN` | `FILLED` | Yes |
-| `OPEN` | `CLOSED` | Yes |
-| `FILLED` | any | No - terminal state |
-| `CLOSED` | any | No - terminal state |
+| From     | To       | Allowed             |
+| -------- | -------- | ------------------- |
+| `OPEN`   | `FILLED` | Yes                 |
+| `OPEN`   | `CLOSED` | Yes                 |
+| `FILLED` | any      | No - terminal state |
+| `CLOSED` | any      | No - terminal state |
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name           | Type | Description              |
+| -------------- | ---- | ------------------------ |
 | `sideHustleId` | UUID | The parent SideHustle ID |
-| `positionId` | UUID | The Position ID |
+| `positionId`   | UUID | The Position ID          |
 
 **Request body**
 
@@ -867,9 +871,9 @@ Transitions a Position to a new status (State pattern). Valid transitions:
 }
 ```
 
-| Field | Type | Required | Constraints |
-|---|---|---|---|
-| `status` | PositionStatus | Yes | `OPEN`, `FILLED`, or `CLOSED` |
+| Field    | Type           | Required | Constraints                   |
+| -------- | -------------- | -------- | ----------------------------- |
+| `status` | PositionStatus | Yes      | `OPEN`, `FILLED`, or `CLOSED` |
 
 **Success response - 200 OK**
 
@@ -885,16 +889,16 @@ Transitions a Position to a new status (State pattern). Valid transitions:
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 400 | Missing `status` or invalid transition (e.g. FILLED → OPEN) |
-| 401 | Missing or invalid Bearer token |
-| 403 | Caller does not own the SideHustle |
-| 404 | Position not found |
+| Code | Condition                                                   |
+| ---- | ----------------------------------------------------------- |
+| 400  | Missing `status` or invalid transition (e.g. FILLED → OPEN) |
+| 401  | Missing or invalid Bearer token                             |
+| 403  | Caller does not own the SideHustle                          |
+| 404  | Position not found                                          |
 
 ---
 
-#### `GET /launchpad/positions/{positionId}/status`  PUBLIC
+#### `GET /launchpad/positions/{positionId}/status` PUBLIC
 
 **Position Status Interface - consumed by ConnectHub Classifieds Module.**
 
@@ -902,8 +906,8 @@ Returns the plain-text status of a Position. **No authentication required.** Thi
 
 **Path parameters**
 
-| Name | Type | Description |
-|---|---|---|
+| Name         | Type | Description     |
+| ------------ | ---- | --------------- |
 | `positionId` | UUID | The Position ID |
 
 **Success response - 200 OK**
@@ -916,9 +920,9 @@ Response body is a plain string: `OPEN`, `FILLED`, or `CLOSED`.
 
 **Error responses**
 
-| Code | Condition |
-|---|---|
-| 404 | Position not found (no 401 - this endpoint is unauthenticated) |
+| Code | Condition                                                      |
+| ---- | -------------------------------------------------------------- |
+| 404  | Position not found (no 401 - this endpoint is unauthenticated) |
 
 ---
 

@@ -2,6 +2,7 @@ import type { SandboxTool } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Plus } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 interface NoteEntry {
   id: string
@@ -130,7 +131,14 @@ export function PostItContent({
             </div>
           </div>
         ))}
-        <button className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2.5 font-heading text-[0.78rem] font-bold text-muted-foreground/50 transition-all hover:border-sandbox-green hover:bg-green-50 hover:text-sandbox-green">
+        <button
+          onClick={() =>
+            toast.info(
+              "Placeholder: creating a new Post-It entry is not wired yet."
+            )
+          }
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2.5 font-heading text-[0.78rem] font-bold text-muted-foreground/50 transition-all hover:border-sandbox-green hover:bg-green-50 hover:text-sandbox-green"
+        >
           <Plus className="size-3.5" /> New Entry
         </button>
       </div>
@@ -158,7 +166,12 @@ export function PostItContent({
                 {t}
               </span>
             ))}
-            <button className="rounded-full border border-dashed border-border px-2 py-px font-heading text-[0.6rem] font-bold text-muted-foreground/50 transition-all hover:border-sandbox-green hover:bg-green-50 hover:text-sandbox-green">
+            <button
+              onClick={() =>
+                toast.info("Placeholder: adding custom tags is not wired yet.")
+              }
+              className="rounded-full border border-dashed border-border px-2 py-px font-heading text-[0.6rem] font-bold text-muted-foreground/50 transition-all hover:border-sandbox-green hover:bg-green-50 hover:text-sandbox-green"
+            >
               + Tag
             </button>
           </div>

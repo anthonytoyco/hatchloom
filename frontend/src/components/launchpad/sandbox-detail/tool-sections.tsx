@@ -14,6 +14,14 @@ import * as Icons from "lucide-react"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router"
+import { toast } from "sonner"
+
+const IMPLEMENTED_TOOL_TYPES: ToolType[] = [
+  "POSTIT",
+  "CHECKLIST",
+  "GUIDED_QA",
+  "DECK",
+]
 
 function ToolIcon({ name, className }: { name: string; className?: string }) {
   const Icon = (
@@ -53,7 +61,14 @@ export function ActiveToolsCard({
           >
             <Plus className="size-3" /> Add tool
           </button>
-          <button className="font-heading text-[0.7rem] font-bold text-hatch-pink hover:opacity-80">
+          <button
+            onClick={() =>
+              toast.info(
+                "Placeholder: full Active Tools index view is not wired yet."
+              )
+            }
+            className="font-heading text-[0.7rem] font-bold text-hatch-pink hover:opacity-80"
+          >
             See all →
           </button>
         </div>
@@ -133,7 +148,15 @@ export function AddToolDialog({
           {TOOL_META.map((m) => (
             <button
               key={m.type}
-              onClick={() => setSelected(m.type)}
+              onClick={() => {
+                if (!IMPLEMENTED_TOOL_TYPES.includes(m.type)) {
+                  toast.info(
+                    `${m.label} is a placeholder tool and editor support is coming soon.`
+                  )
+                  return
+                }
+                setSelected(m.type)
+              }}
               className={cn(
                 "flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all",
                 selected === m.type

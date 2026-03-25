@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { ChevronRight, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router"
+import { toast } from "sonner"
 
 export function ToolPage() {
   const {
@@ -35,7 +36,7 @@ export function ToolPage() {
     typeof setTimeout
   > | null>(null)
 
-  const [toast, setToast] = useState({ msg: "", visible: false })
+  const [inlineToast, setInlineToast] = useState({ msg: "", visible: false })
   const [toastTimer, setToastTimer] = useState<ReturnType<
     typeof setTimeout
   > | null>(null)
@@ -53,9 +54,9 @@ export function ToolPage() {
 
   function showToast(msg: string) {
     if (toastTimer) clearTimeout(toastTimer)
-    setToast({ msg, visible: true })
+    setInlineToast({ msg, visible: true })
     const timer = setTimeout(
-      () => setToast((prev) => ({ ...prev, visible: false })),
+      () => setInlineToast((prev) => ({ ...prev, visible: false })),
       2500
     )
     setToastTimer(timer)
@@ -89,6 +90,8 @@ export function ToolPage() {
 
   async function handleDelete() {
     if (!tool) return
+    if (saveTimer) clearTimeout(saveTimer)
+    setSaveTimer(null)
     await deleteTool.mutateAsync(tool.id)
     void navigate(`/launchpad/sandboxes/${sandboxId}`)
   }
@@ -192,23 +195,39 @@ export function ToolPage() {
             <ActionBtn
               emoji="⬇️"
               label="Download"
-              onClick={() => showToast("⬇️ Downloading…")}
+              onClick={() =>
+                toast.info(
+                  "Placeholder: Download export is not implemented yet for this tool."
+                )
+              }
             />
             <ActionBtn
               emoji="📤"
               label="Export to…"
-              onClick={() => showToast("📤 Export destination")}
+              onClick={() =>
+                toast.info(
+                  "Placeholder: Export destination flow is not implemented yet."
+                )
+              }
             />
             <ActionBtn
               emoji="🔗"
               label="Share link"
-              onClick={() => showToast("🔗 Link copied!")}
+              onClick={() =>
+                toast.info(
+                  "Placeholder: Share-link generation is not implemented yet."
+                )
+              }
             />
             <ABSep />
             <ActionBtn
               emoji="📋"
               label="Duplicate"
-              onClick={() => showToast("📋 Duplicated")}
+              onClick={() =>
+                toast.info(
+                  "Placeholder: Tool duplication flow is not implemented yet."
+                )
+              }
             />
             <ActionBtn
               emoji="🗑️"
@@ -242,7 +261,7 @@ export function ToolPage() {
         </div>
       </div>
 
-      <Toast msg={toast.msg} visible={toast.visible} />
+      <Toast msg={inlineToast.msg} visible={inlineToast.visible} />
     </div>
   )
 }

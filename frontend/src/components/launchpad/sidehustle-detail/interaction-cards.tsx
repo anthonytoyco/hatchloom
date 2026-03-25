@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Check, Plus } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 type CommsTab = "msgs" | "emails" | "phonebook"
 
@@ -36,10 +37,24 @@ export function TodoCard() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-0.5 font-heading text-[0.65rem] font-bold text-amber-600 hover:opacity-80">
+          <button
+            onClick={() =>
+              toast.info(
+                "Placeholder: SideHustle todo creation flow is not wired yet."
+              )
+            }
+            className="flex items-center gap-0.5 font-heading text-[0.65rem] font-bold text-amber-600 hover:opacity-80"
+          >
             <Plus className="size-2.5" /> Add
           </button>
-          <button className="font-heading text-[0.65rem] font-bold text-hatch-pink hover:opacity-80">
+          <button
+            onClick={() =>
+              toast.info(
+                "Placeholder: SideHustle full todo list view is not wired yet."
+              )
+            }
+            className="font-heading text-[0.65rem] font-bold text-hatch-pink hover:opacity-80"
+          >
             See all →
           </button>
         </div>
@@ -185,7 +200,14 @@ export function CommsCard() {
               </div>
             </div>
           ))}
-          <button className="mt-0.5 text-left font-heading text-[0.58rem] font-bold text-amber-600 hover:opacity-80">
+          <button
+            onClick={() =>
+              toast.info(
+                "Placeholder: SideHustle add-contact flow is not wired yet."
+              )
+            }
+            className="mt-0.5 text-left font-heading text-[0.58rem] font-bold text-amber-600 hover:opacity-80"
+          >
             + Add contact
           </button>
         </div>

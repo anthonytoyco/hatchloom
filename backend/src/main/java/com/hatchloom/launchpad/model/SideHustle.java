@@ -1,6 +1,7 @@
 package com.hatchloom.launchpad.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.hatchloom.launchpad.model.enums.SideHustleStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -71,11 +74,14 @@ public class SideHustle {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "sideHustle")
+    @OneToOne(mappedBy = "sideHustle", cascade = CascadeType.ALL, orphanRemoval = true)
     private BusinessModelCanvas bmc;
 
-    @OneToOne(mappedBy = "sideHustle")
+    @OneToOne(mappedBy = "sideHustle", cascade = CascadeType.ALL, orphanRemoval = true)
     private Team team;
+
+    @OneToMany(mappedBy = "sideHustle", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Position> positions;
 
     /** Default constructor required by JPA. */
     public SideHustle() {

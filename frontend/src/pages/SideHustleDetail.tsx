@@ -26,6 +26,7 @@ import { useSideHustle } from "@/hooks/use-side-hustle"
 import { ArrowRight, ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { Link, useNavigate, useParams } from "react-router"
+import { toast } from "sonner"
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -34,8 +35,10 @@ export function SideHustleDetail() {
     sideHustleId: string
   }>()
   const navigate = useNavigate()
+  const [isDeleting, setIsDeleting] = useState(false)
+  const activeSideHustleId = isDeleting ? "" : sideHustleId
   const { sideHustle, bmc, team, positions, isLoading } =
-    useSideHustle(sideHustleId)
+    useSideHustle(activeSideHustleId)
   const deleteSideHustle = useDeleteSideHustle()
   const removeTeamMember = useRemoveTeamMember(sideHustleId)
 
@@ -43,14 +46,28 @@ export function SideHustleDetail() {
   const [showAddMember, setShowAddMember] = useState(false)
 
   async function handleDelete() {
-    await deleteSideHustle.mutateAsync(sideHustleId)
-    void navigate("/launchpad")
+    try {
+      setIsDeleting(true)
+      await deleteSideHustle.mutateAsync(sideHustleId)
+      void navigate("/launchpad")
+    } catch (error) {
+      setIsDeleting(false)
+      toast.error("Failed to delete side hustle")
+    }
+  }
+
+  async function handleRemoveMember(userId: string) {
+    try {
+      await removeTeamMember.mutateAsync(userId)
+    } catch {
+      toast.error("Failed to remove team member")
+    }
   }
 
   return (
     <AppLayout
       sidebarSections={LAUNCHPAD_SIDEBAR_SECTIONS}
-      sidebarCta={{ label: "💬 Contact Hatchloom", href: "#" }}
+      sidebarCta={{ label: "💬 Contact Hatchloom", href: "/contact" }}
     >
       <div className="px-7 pt-5 pb-10">
         {/* Breadcrumb */}
@@ -73,75 +90,108 @@ export function SideHustleDetail() {
           <span>🧈 {sideHustle?.title ?? "…"}</span>
         </nav>
 
-        {/* Hero */}
         {isLoading ? (
-          <div className="mb-4 h-[90px] animate-pulse rounded-2xl bg-muted" />
+          <>
+            {/* Hero */}
+            <div className="mb-4 h-[90px] animate-pulse rounded-2xl bg-muted" />
+
+            {/* Business cards */}
+            <div className="mb-5 grid grid-cols-2 gap-5">
+              <div className="h-[140px] animate-pulse rounded-2xl bg-muted" />
+              <div className="h-[140px] animate-pulse rounded-2xl bg-muted" />
+            </div>
+          </>
         ) : sideHustle ? (
-          <HeroCard
-            title={sideHustle.title}
-            description={sideHustle.description}
-            status={sideHustle.status}
-            team={team}
-            fallbackTeam={TEAM_MEMBERS}
-            onEdit={() => setShowEdit(true)}
-            onDelete={() => void handleDelete()}
-            onAddMember={() => setShowAddMember(true)}
-            onRemoveMember={(memberId) =>
-              void removeTeamMember.mutateAsync(memberId)
-            }
-          />
+          <>
+            {/* Hero */}
+            <HeroCard
+              title={sideHustle.title}
+              description={sideHustle.description}
+              status={sideHustle.status}
+              team={team}
+              fallbackTeam={TEAM_MEMBERS}
+              onEdit={() => setShowEdit(true)}
+              onDelete={() => void handleDelete()}
+              onAddMember={() => setShowAddMember(true)}
+              onRemoveMember={(userId) => void handleRemoveMember(userId)}
+            />
+
+            {/* Business cards */}
+            <BusinessCard type="running" />
+            <BusinessCard type="growing" />
+
+            {/* BMC */}
+            {bmc && <BMCSection bmc={bmc} sideHustleId={sideHustleId} />}
+
+            {/* Positions */}
+            <PositionsSection
+              positions={positions}
+              sideHustleId={sideHustleId}
+            />
+
+            {/* Todos + Comms */}
+            <div className="mb-5 grid grid-cols-2 gap-4">
+              <TodoCard />
+              <CommsCard />
+            </div>
+
+            {/* Nudge */}
+            <button
+              onClick={() =>
+                toast.info(
+                  "Placeholder: Post to Classifieds handoff is not wired yet."
+                )
+              }
+              className="mb-5 flex w-full animate-[fadeUp_0.35s_ease_0.2s_both] cursor-pointer items-center gap-2.5 rounded-[9px] border-[1.5px] border-amber-200 bg-amber-50 px-3 py-2.5 text-left transition-all hover:border-amber-400 hover:shadow-[0_2px_6px_rgba(217,119,6,0.12)]"
+              type="button"
+            >
+              <span className="text-base">👋</span>
+              <div>
+                <p className="font-heading text-[0.7rem] font-bold text-hatch-charcoal">
+                  Need help at your next market?
+                </p>
+                <p className="text-[0.58rem] text-muted-foreground">
+                  Post to Classifieds and find a teammate
+                </p>
+              </div>
+              <ArrowRight className="ml-auto size-4 text-amber-500" />
+            </button>
+
+            {/* Shelves */}
+            <ShelfRow title="📌 Tagged Resources" action="See all →">
+              {TAGGED_RESOURCES.map((r) => (
+                <ResourceCard key={r.name} r={r} />
+              ))}
+            </ShelfRow>
+            <ShelfRow title="📡 Active Channels" action="Manage →">
+              {CHANNELS.map((c) => (
+                <ChannelCard key={c.name} c={c} />
+              ))}
+            </ShelfRow>
+            <ShelfRow title="✨ Recommended">
+              {RECOMMENDED.map((r) => (
+                <ResourceCard key={r.name} r={r} />
+              ))}
+            </ShelfRow>
+          </>
         ) : (
-          <div className="mb-4 rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-            SideHustle not found.
+          <div className="flex min-h-[600px] flex-col items-center justify-center gap-4">
+            <div className="text-center">
+              <p className="mb-2 text-sm font-semibold text-muted-foreground">
+                Side Hustle not found
+              </p>
+              <p className="mb-6 text-xs text-muted-foreground">
+                This side hustle doesn't exist or you don't have access to it.
+              </p>
+              <Link
+                to="/launchpad"
+                className="inline-flex items-center gap-2 rounded-lg bg-hatch-pink px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-90"
+              >
+                Back to LaunchPad
+              </Link>
+            </div>
           </div>
         )}
-
-        {/* Business cards */}
-        <BusinessCard type="running" />
-        <BusinessCard type="growing" />
-
-        {/* BMC */}
-        {bmc && <BMCSection bmc={bmc} sideHustleId={sideHustleId} />}
-
-        {/* Positions */}
-        <PositionsSection positions={positions} sideHustleId={sideHustleId} />
-
-        {/* Todos + Comms */}
-        <div className="mb-5 grid grid-cols-2 gap-4">
-          <TodoCard />
-          <CommsCard />
-        </div>
-
-        {/* Nudge */}
-        <div className="mb-5 flex animate-[fadeUp_0.35s_ease_0.2s_both] cursor-pointer items-center gap-2.5 rounded-[9px] border-[1.5px] border-amber-200 bg-amber-50 px-3 py-2.5 transition-all hover:border-amber-400 hover:shadow-[0_2px_6px_rgba(217,119,6,0.12)]">
-          <span className="text-base">👋</span>
-          <div>
-            <p className="font-heading text-[0.7rem] font-bold text-hatch-charcoal">
-              Need help at your next market?
-            </p>
-            <p className="text-[0.58rem] text-muted-foreground">
-              Post to Classifieds and find a teammate
-            </p>
-          </div>
-          <ArrowRight className="ml-auto size-4 text-amber-500" />
-        </div>
-
-        {/* Shelves */}
-        <ShelfRow title="📌 Tagged Resources" action="See all →">
-          {TAGGED_RESOURCES.map((r) => (
-            <ResourceCard key={r.name} r={r} />
-          ))}
-        </ShelfRow>
-        <ShelfRow title="📡 Active Channels" action="Manage →">
-          {CHANNELS.map((c) => (
-            <ChannelCard key={c.name} c={c} />
-          ))}
-        </ShelfRow>
-        <ShelfRow title="✨ Recommended">
-          {RECOMMENDED.map((r) => (
-            <ResourceCard key={r.name} r={r} />
-          ))}
-        </ShelfRow>
       </div>
 
       {/* Dialogs */}
@@ -157,6 +207,7 @@ export function SideHustleDetail() {
       <AddTeamMemberDialog
         open={showAddMember}
         sideHustleId={sideHustleId}
+        team={team}
         onClose={() => setShowAddMember(false)}
       />
     </AppLayout>

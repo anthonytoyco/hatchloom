@@ -52,9 +52,7 @@ export function useDeleteSandbox() {
   return useMutation({
     mutationFn: (sandboxId: string) =>
       apiFetch<void>(`/launchpad/sandboxes/${sandboxId}`, { method: "DELETE" }),
-    onSuccess: (_data, sandboxId) => {
-      qc.removeQueries({ queryKey: ["sandbox", sandboxId] })
-      qc.removeQueries({ queryKey: ["sandbox-tools", sandboxId] })
+    onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["launchpad-home"] })
     },
   })
@@ -184,9 +182,9 @@ export function useAddTeamMember(sideHustleId: string) {
 export function useRemoveTeamMember(sideHustleId: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (memberId: string) =>
+    mutationFn: (userId: string) =>
       apiFetch<void>(
-        `/launchpad/sidehustles/${sideHustleId}/team/members/${memberId}`,
+        `/launchpad/sidehustles/${sideHustleId}/team/members/${userId}`,
         { method: "DELETE" }
       ),
     onSuccess: () => {

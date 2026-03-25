@@ -14,7 +14,9 @@ import com.hatchloom.launchpad.dto.request.CreateSandboxRequest;
 import com.hatchloom.launchpad.dto.request.UpdateSandboxRequest;
 import com.hatchloom.launchpad.dto.response.SandboxResponse;
 import com.hatchloom.launchpad.model.Sandbox;
+import com.hatchloom.launchpad.model.SideHustle;
 import com.hatchloom.launchpad.repository.SandboxRepository;
+import com.hatchloom.launchpad.repository.SideHustleRepository;
 
 /**
  * Service for Sandbox CRUD operations.
@@ -25,9 +27,12 @@ public class SandboxService {
     private static final Logger log = LoggerFactory.getLogger(SandboxService.class);
 
     private final SandboxRepository sandboxRepository;
+    private final SideHustleRepository sideHustleRepository;
 
-    public SandboxService(SandboxRepository sandboxRepository) {
+    public SandboxService(SandboxRepository sandboxRepository,
+            SideHustleRepository sideHustleRepository) {
         this.sandboxRepository = sandboxRepository;
+        this.sideHustleRepository = sideHustleRepository;
     }
 
     /**
@@ -74,13 +79,26 @@ public class SandboxService {
     }
 
     /**
-     * Deletes a Sandbox. Cascades to all SandboxTools.
+     * Deletes a Sandbox and all SideHustles linked to it.
+     *
+     * <p>
+     * Deleting linked SideHustles first ensures their own cascade rules are
+     * applied (BMC, Team, TeamMembers, Positions) before removing the parent
+     * Sandbox.
+     * </p>
      *
      * @param sandboxId the sandbox UUID
      */
     @Transactional
     public void deleteSandbox(UUID sandboxId) {
         Sandbox sandbox = findOrThrow(sandboxId);
+
+        List<SideHustle> linkedSideHustles = sideHustleRepository.findAllBySandbox_Id(sandboxId);
+        if (!linkedSideHustles.isEmpty()) {
+            sideHustleRepository.deleteAll(linkedSideHustles);
+            log.debug("Deleted {} side hustles linked to sandbox {}", linkedSideHustles.size(), sandboxId);
+        }
+
         sandboxRepository.delete(sandbox);
         log.debug("Deleted sandbox {}", sandboxId);
     }

@@ -263,7 +263,7 @@ Position --> PositionStatus
 ### Key domain rules
 
 - A `Sandbox` is a student's experimental workspace. It holds many `SandboxTool` records, each storing a JSON blob of tool-specific content.
-- A `SideHustle` can optionally reference a parent `Sandbox` (the idea it grew from). If that Sandbox is deleted, `side_hustles.sandbox_id` is set to `NULL` - the venture survives.
+- A `SideHustle` can optionally reference a parent `Sandbox` (the idea it grew from). If that Sandbox is deleted, all linked SideHustles are deleted as well.
 - Every `SideHustle` always has exactly one `BusinessModelCanvas` and one `Team`, both auto-created at creation time with all fields null/empty.
 - `Position.hasOpenPositions` on `SideHustle` is a denormalised flag maintained by `PositionService` - set to `true` on position creation, recalculated after every status update.
 - `PositionStatus` transitions are strictly one-way: `OPEN → FILLED` or `OPEN → CLOSED`. `FILLED` and `CLOSED` are terminal.
@@ -546,6 +546,11 @@ if (!sh.getStudentId().equals(callerId)) {
 
 Flyway manages all schema changes. Migration files live in `src/main/resources/db/migration` and are applied in version order on startup. Hibernate runs in `validate` mode - it checks that the entity mappings match the current schema but never alters it.
 
+Current schema baseline and updates:
+
+- `V1__init_launchpad_schema.sql` creates the initial LaunchPad schema
+- `V2__cascade_side_hustles_on_sandbox_delete.sql` updates `side_hustles.sandbox_id` to `ON DELETE CASCADE`
+
 ### Tables
 
 | Table           | Entity                | Key columns                                                                     |
@@ -561,8 +566,8 @@ Flyway manages all schema changes. Migration files live in `src/main/resources/d
 ### Cascade rules
 
 - `Sandbox` delete → cascades to `SandboxTool`
+- `Sandbox` delete → cascades to linked `SideHustle`
 - `SideHustle` delete → cascades to `BusinessModelCanvas`, `Team`, `TeamMember`, `Position`
-- `Sandbox` delete → sets `side_hustles.sandbox_id = NULL` (ON DELETE SET NULL)
 
 ---
 

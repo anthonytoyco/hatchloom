@@ -19,4 +19,12 @@ public interface SideHustleRepository extends JpaRepository<SideHustle, UUID> {
      * @return list of SideHustles, empty if none found
      */
     List<SideHustle> findAllByStudentId(UUID studentId);
+
+    /**
+     * Returns all SideHustles linked to a sandbox.
+     *
+     * @param sandboxId the sandbox UUID
+     * @return list of SideHustles, empty if none linked
+     */
+    List<SideHustle> findAllBySandbox_Id(UUID sandboxId);
 }

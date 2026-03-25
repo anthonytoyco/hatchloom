@@ -28,7 +28,7 @@ export function HeroCard({
   onEdit: () => void
   onDelete: () => void
   onAddMember: () => void
-  onRemoveMember: (memberId: string) => void
+  onRemoveMember: (userId: string) => void
 }) {
   const [teamOpen, setTeamOpen] = useState(false)
   const teamRef = useRef<HTMLDivElement>(null)
@@ -47,7 +47,12 @@ export function HeroCard({
   }, [teamOpen])
 
   return (
-    <div className="mb-4 animate-[fadeUp_0.35s_ease_both] overflow-visible rounded-2xl border border-border bg-card shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
+    <div
+      className={cn(
+        "relative mb-4 animate-[fadeUp_0.35s_ease_both] overflow-visible rounded-2xl border border-border bg-card shadow-[0_2px_10px_rgba(0,0,0,0.04)]",
+        teamOpen ? "z-40" : "z-0"
+      )}
+    >
       <div className="relative flex h-[60px] items-center rounded-t-2xl bg-gradient-to-r from-amber-200 to-amber-500 px-5">
         <div className="flex size-[42px] shrink-0 items-center justify-center rounded-[10px] bg-white/90 text-[1.3rem] shadow-[0_2px_8px_rgba(0,0,0,0.1)] backdrop-blur-sm">
           🧈
@@ -76,7 +81,7 @@ export function HeroCard({
             Updated 1 hour ago
           </div>
 
-          <div className="relative" ref={teamRef}>
+          <div className="relative z-10" ref={teamRef}>
             <button
               onClick={() => setTeamOpen((v) => !v)}
               className="flex items-center transition-opacity hover:opacity-85"
@@ -120,7 +125,7 @@ export function HeroCard({
                           )}
                         </div>
                         <button
-                          onClick={() => onRemoveMember(m.id)}
+                          onClick={() => onRemoveMember(m.studentId)}
                           className="flex size-5 shrink-0 items-center justify-center rounded border border-transparent text-[0.55rem] text-muted-foreground transition-all hover:border-hatch-pink/40 hover:bg-rose-50 hover:text-hatch-pink"
                         >
                           <Trash2 className="size-2.5" />

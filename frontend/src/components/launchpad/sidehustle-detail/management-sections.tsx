@@ -16,10 +16,18 @@ import {
   useUpdatePositionStatus,
   useUpdateSideHustle,
 } from "@/hooks/use-mutations"
-import type { BusinessModelCanvas, Position, PositionStatus } from "@/lib/types"
+import type {
+  BusinessModelCanvas,
+  Position,
+  PositionStatus,
+  TeamMember,
+} from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Plus } from "lucide-react"
 import { useState } from "react"
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export function EditSideHustleDialog({
   open,
@@ -56,7 +64,11 @@ export function EditSideHustleDialog({
             Edit SideHustle ✏️
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 pt-2">
+        <form
+          onSubmit={(e) => void handleSubmit(e)}
+          className="space-y-4 pt-2"
+          autoComplete="off"
+        >
           <div className="space-y-1.5">
             <Label
               htmlFor="sh-edit-title"
@@ -106,23 +118,60 @@ export function EditSideHustleDialog({
 export function AddTeamMemberDialog({
   open,
   sideHustleId,
+  team,
   onClose,
 }: {
   open: boolean
   sideHustleId: string
+  team: TeamMember[]
   onClose: () => void
 }) {
   const [userId, setUserId] = useState("")
   const [role, setRole] = useState("")
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const { mutateAsync, isPending } = useAddTeamMember(sideHustleId)
+
+  const trimmedUserId = userId.trim()
+  const isUuid = UUID_REGEX.test(trimmedUserId)
+  const normalizedUserId = trimmedUserId.toLowerCase()
+  const isDuplicate = team.some(
+    (member) => member.studentId.toLowerCase() === normalizedUserId
+  )
+  const userIdError = !trimmedUserId
+    ? null
+    : !isUuid
+      ? "User ID must be a valid UUID (e.g. 123e4567-e89b-12d3-a456-426614174000)."
+      : isDuplicate
+        ? "This member has already been added."
+        : null
+  const canSubmit = !!trimmedUserId && !userIdError && !isPending
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!userId.trim()) return
-    await mutateAsync({ userId: userId.trim(), role: role.trim() || undefined })
-    onClose()
-    setUserId("")
-    setRole("")
+    setSubmitError(null)
+    if (!canSubmit) {
+      if (!trimmedUserId) {
+        setSubmitError("User ID is required.")
+      } else if (userIdError) {
+        setSubmitError(userIdError)
+      }
+      return
+    }
+
+    try {
+      await mutateAsync({
+        userId: trimmedUserId,
+        role: role.trim() || undefined,
+      })
+      onClose()
+      setUserId("")
+      setRole("")
+      setSubmitError(null)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to add team member"
+      setSubmitError(message)
+    }
   }
 
   return (
@@ -143,11 +192,24 @@ export function AddTeamMemberDialog({
             </Label>
             <Input
               id="tm-userid"
+              name="userId"
+              type="text"
               placeholder="Student UUID"
               value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              onChange={(e) => {
+                setUserId(e.target.value)
+                if (submitError) setSubmitError(null)
+              }}
+              autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
               required
             />
+            {userIdError && (
+              <p className="text-[0.68rem] font-medium text-red-600">
+                {userIdError}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="tm-role" className="font-heading text-xs font-bold">
@@ -155,9 +217,14 @@ export function AddTeamMemberDialog({
             </Label>
             <Input
               id="tm-role"
+              name="role"
+              type="text"
               placeholder="e.g. Co-Founder"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+              autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
             />
           </div>
           <DialogFooter>
@@ -166,12 +233,17 @@ export function AddTeamMemberDialog({
             </Button>
             <Button
               type="submit"
-              disabled={!userId.trim() || isPending}
+              disabled={!canSubmit}
               className="bg-hatch-pink text-white hover:bg-hatch-pink/90"
             >
               Add Member
             </Button>
           </DialogFooter>
+          {submitError && (
+            <p className="text-[0.68rem] font-medium text-red-600">
+              {submitError}
+            </p>
+          )}
         </form>
       </DialogContent>
     </Dialog>
@@ -322,10 +394,8 @@ export function PositionsSection({
     setNewDesc("")
   }
 
-  const STATUS_CYCLE: Record<PositionStatus, PositionStatus> = {
+  const NEXT_STATUS: Partial<Record<PositionStatus, PositionStatus>> = {
     OPEN: "FILLED",
-    FILLED: "CLOSED",
-    CLOSED: "OPEN",
   }
 
   const STATUS_STYLE: Record<PositionStatus, string> = {
@@ -408,15 +478,21 @@ export function PositionsSection({
                 )}
               </div>
               <button
-                onClick={() =>
+                onClick={() => {
+                  const nextStatus = NEXT_STATUS[p.status]
+                  if (!nextStatus) return
                   void updateStatus.mutateAsync({
                     positionId: p.id,
-                    status: STATUS_CYCLE[p.status],
+                    status: nextStatus,
                     sideHustleId,
                   })
-                }
+                }}
+                disabled={!NEXT_STATUS[p.status] || updateStatus.isPending}
                 className={cn(
-                  "rounded-full border px-2 py-0.5 font-heading text-[0.6rem] font-bold transition-all hover:opacity-80",
+                  "rounded-full border px-2 py-0.5 font-heading text-[0.6rem] font-bold transition-all",
+                  NEXT_STATUS[p.status]
+                    ? "hover:opacity-80"
+                    : "cursor-not-allowed opacity-80",
                   STATUS_STYLE[p.status]
                 )}
               >

@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Check, Trash2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 
 function PhaseTracker() {
   const [openGate, setOpenGate] = useState<string | null>(null)
@@ -41,7 +42,14 @@ function PhaseTracker() {
         <span className="font-heading text-[0.78rem] font-extrabold text-hatch-charcoal">
           📍 Project Phase
         </span>
-        <button className="font-heading text-[0.65rem] font-bold text-muted-foreground transition-colors hover:text-sandbox-green">
+        <button
+          onClick={() =>
+            toast.info(
+              "Placeholder: phase editing is not wired yet. This will open phase configuration."
+            )
+          }
+          className="font-heading text-[0.65rem] font-bold text-muted-foreground transition-colors hover:text-sandbox-green"
+        >
           ✏️ Edit phases
         </button>
       </div>
@@ -163,7 +171,14 @@ function PhaseTracker() {
                           }
                         />
                         <div className="mt-1 flex justify-end">
-                          <button className="font-heading text-[0.65rem] font-bold text-sandbox-green hover:opacity-80">
+                          <button
+                            onClick={() =>
+                              toast.info(
+                                "Placeholder: gate answers are not persisted yet."
+                              )
+                            }
+                            className="font-heading text-[0.65rem] font-bold text-sandbox-green hover:opacity-80"
+                          >
                             Save →
                           </button>
                         </div>
@@ -181,7 +196,14 @@ function PhaseTracker() {
         <span className="font-heading text-[0.65rem] font-semibold text-muted-foreground">
           Skip ahead anytime
         </span>
-        <button className="flex items-center gap-1.5 rounded-[10px] bg-gradient-to-r from-hatch-pink to-[#E6004E] px-4 py-[0.45rem] font-heading text-[0.75rem] font-extrabold text-white shadow-[0_2px_8px_rgba(255,31,90,0.2)] transition-opacity hover:opacity-90">
+        <button
+          onClick={() =>
+            toast.info(
+              "Placeholder: promote Sandbox to SideHustle flow is not wired yet."
+            )
+          }
+          className="flex items-center gap-1.5 rounded-[10px] bg-gradient-to-r from-hatch-pink to-[#E6004E] px-4 py-[0.45rem] font-heading text-[0.75rem] font-extrabold text-white shadow-[0_2px_8px_rgba(255,31,90,0.2)] transition-opacity hover:opacity-90"
+        >
           🚀 Ready to Launch as SideHustle?
         </button>
       </div>
@@ -290,15 +312,36 @@ export function HeroCard({
                       </div>
                       <div className="flex shrink-0 items-center gap-1">
                         {m.isAI ? (
-                          <button className="flex items-center gap-1 rounded-md border border-transparent px-2 py-1 font-heading text-[0.6rem] font-bold text-muted-foreground transition-all hover:border-violet-200 hover:bg-violet-50 hover:text-violet-600">
+                          <button
+                            onClick={() =>
+                              toast.info(
+                                "Placeholder: AI teammate chat handoff is not wired yet."
+                              )
+                            }
+                            className="flex items-center gap-1 rounded-md border border-transparent px-2 py-1 font-heading text-[0.6rem] font-bold text-muted-foreground transition-all hover:border-violet-200 hover:bg-violet-50 hover:text-violet-600"
+                          >
                             💬 Ask
                           </button>
                         ) : (
                           <>
-                            <button className="flex size-6 items-center justify-center rounded-md border border-transparent text-[0.65rem] text-muted-foreground transition-all hover:border-sandbox-green/30 hover:bg-green-50 hover:text-sandbox-green">
+                            <button
+                              onClick={() =>
+                                toast.info(
+                                  "Placeholder: direct message compose is not wired yet."
+                                )
+                              }
+                              className="flex size-6 items-center justify-center rounded-md border border-transparent text-[0.65rem] text-muted-foreground transition-all hover:border-sandbox-green/30 hover:bg-green-50 hover:text-sandbox-green"
+                            >
                               ✉️
                             </button>
-                            <button className="flex size-6 items-center justify-center rounded-md border border-transparent text-[0.65rem] text-muted-foreground transition-all hover:border-sandbox-green/30 hover:bg-green-50 hover:text-sandbox-green">
+                            <button
+                              onClick={() =>
+                                toast.info(
+                                  "Placeholder: mention/invite flow is not wired yet."
+                                )
+                              }
+                              className="flex size-6 items-center justify-center rounded-md border border-transparent text-[0.65rem] text-muted-foreground transition-all hover:border-sandbox-green/30 hover:bg-green-50 hover:text-sandbox-green"
+                            >
                               @
                             </button>
                           </>

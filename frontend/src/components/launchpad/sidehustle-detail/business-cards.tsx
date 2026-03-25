@@ -8,6 +8,7 @@ import {
   WEEKLY_DATA,
 } from "@/components/launchpad/sidehustle-detail/demo-data"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 export function MiniBarChart() {
   const W = 160,
@@ -189,12 +190,26 @@ export function BusinessCard({ type }: { type: "running" | "growing" }) {
         {tiles.map((t) => (
           <MetricTile key={t.label} t={t} />
         ))}
-        <button className="flex cursor-pointer items-center justify-center gap-0.5 rounded-lg border-[1.5px] border-dashed border-muted-foreground/30 bg-hatch-bg px-1 py-[0.45rem] font-heading text-[0.55rem] font-bold text-muted-foreground/40 transition-all hover:border-amber-400 hover:bg-amber-50 hover:text-amber-600">
+        <button
+          onClick={() =>
+            toast.info(
+              "Placeholder: custom metric-tile creation is not wired yet."
+            )
+          }
+          className="flex cursor-pointer items-center justify-center gap-0.5 rounded-lg border-[1.5px] border-dashed border-muted-foreground/30 bg-hatch-bg px-1 py-[0.45rem] font-heading text-[0.55rem] font-bold text-muted-foreground/40 transition-all hover:border-amber-400 hover:bg-amber-50 hover:text-amber-600"
+        >
           + Add tile
         </button>
       </div>
       <div className="mt-1.5 flex items-center">
-        <button className="font-heading text-[0.58rem] font-bold text-violet-500 hover:opacity-80">
+        <button
+          onClick={() =>
+            toast.info(
+              "Placeholder: Barry suggestion workflow is not wired yet."
+            )
+          }
+          className="font-heading text-[0.58rem] font-bold text-violet-500 hover:opacity-80"
+        >
           🔄 Barry can suggest more
         </button>
       </div>
