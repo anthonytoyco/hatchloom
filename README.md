@@ -9,7 +9,7 @@ It exposes one public endpoint (Position Status Interface) consumed by ConnectHu
 - Java 21 (JDK)
 - Apache Maven (or use the included `./backend/mvnw` wrapper)
 - Docker and Docker Compose (for containerised runs)
-- A running Auth service at `http://localhost:8081` for JWT validation (protected endpoints only)
+- A running Auth service at `http://localhost:8081` only if you run without the dev override compose file
 
 ## Run locally (native)
 
@@ -22,19 +22,33 @@ cd backend && ./mvnw spring-boot:run
 
 The service starts on port **8082** (mapped from container port 8080).
 
-## Run with Docker
+## Run with Docker (development, recommended)
 
-Builds the image and starts Postgres + LaunchPad together:
+Builds the images and starts Postgres + LaunchPad + Frontend with dev auth bypass enabled:
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
 ```
 
-The service will be available at `http://localhost:8082`.
+Services will be available at:
 
-> Note: JWT-protected endpoints require the Auth service to be reachable at
-> `http://auth:8081` inside Docker. The public Position Status Interface
-> (`GET /launchpad/positions/{id}/status`) works without Auth.
+- Frontend SPA: `http://localhost:4173`
+- LaunchPad API: `http://localhost:8082`
+- Postgres: `localhost:5432`
+
+In this mode, `docker-compose.dev.yaml` sets `SPRING_PROFILES_ACTIVE=dev`, so the external Auth service is not required for local development.
+
+The frontend container serves SPA routes and proxies API traffic from `/api/launchpad/*` to the backend `/launchpad/*`. This prevents refreshes on `/launchpad/...` client routes from being mistaken as backend requests.
+
+## Run with Docker (base compose only)
+
+Use this only when you intentionally want normal JWT validation behavior:
+
+```bash
+docker compose -f docker-compose.yaml up --build
+```
+
+In this mode, protected endpoints require the Auth service to be reachable at `http://auth:8081` inside Docker.
 
 ## Run tests
 
@@ -55,20 +69,20 @@ cd backend && ./mvnw test -Dgroups=integration \
 
 ## Environment variables
 
-| Variable | Default (local) | Docker value |
-| --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | (Spring Docker Compose) | `jdbc:postgresql://postgres:5432/launchpad_db` |
-| `SPRING_DATASOURCE_USERNAME` | `launchpad_user` | `launchpad_user` |
-| `SPRING_DATASOURCE_PASSWORD` | `launchpad_pass` | `launchpad_pass` |
-| `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI` | `http://localhost:8081` | `http://auth:8081` |
-| `SERVER_PORT` | `8080` | `8080` (host-mapped to `8082`) |
+| Variable                                               | Default (local)         | Docker value                                   |
+| ------------------------------------------------------ | ----------------------- | ---------------------------------------------- |
+| `SPRING_DATASOURCE_URL`                                | (Spring Docker Compose) | `jdbc:postgresql://postgres:5432/launchpad_db` |
+| `SPRING_DATASOURCE_USERNAME`                           | `launchpad_user`        | `launchpad_user`                               |
+| `SPRING_DATASOURCE_PASSWORD`                           | `launchpad_pass`        | `launchpad_pass`                               |
+| `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI` | `http://localhost:8081` | `http://auth:8081`                             |
+| `SERVER_PORT`                                          | `8080`                  | `8080` (host-mapped to `8082`)                 |
 
 ## Cross-service dependencies
 
-| Dependency | Direction | Details |
-| --- | --- | --- |
-| Auth service | LaunchPad validates JWTs | `issuer-uri` must point to the Auth service OIDC discovery endpoint. LaunchPad does NOT issue tokens. |
-| ConnectHub | ConnectHub calls LaunchPad | `GET /launchpad/positions/{positionId}/status` - public, no token required. Returns `"OPEN"`, `"FILLED"`, or `"CLOSED"`. |
+| Dependency   | Direction                  | Details                                                                                                                  |
+| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Auth service | LaunchPad validates JWTs   | `issuer-uri` must point to the Auth service OIDC discovery endpoint. LaunchPad does NOT issue tokens.                    |
+| ConnectHub   | ConnectHub calls LaunchPad | `GET /launchpad/positions/{positionId}/status` - public, no token required. Returns `"OPEN"`, `"FILLED"`, or `"CLOSED"`. |
 
 ## API documentation
 
@@ -78,7 +92,7 @@ cd backend && ./mvnw test -Dgroups=integration \
 ## Known issues
 
 - The Auth service is owned by Sub-Pack Q1 and is not included in this `compose.yaml`.
-  When running `docker compose up` from this directory, JWT validation for protected
+  When running `docker compose -f docker-compose.yaml up` from this directory, JWT validation for protected
   endpoints will fail because `http://auth:8081` is unreachable. The full-platform
   Docker Compose (integration sprint deliverable) must add the Auth service.
 - LaunchPad performs JWT issuer discovery on startup. If Auth is unreachable at startup

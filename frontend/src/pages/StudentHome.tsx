@@ -124,7 +124,7 @@ const ACTIVITY_FEED = [
     bg: "bg-sky-50",
     text: (
       <>
-        You completed <strong>Idea Validation</strong> — 3 tools used
+        You completed <strong>Idea Validation</strong> - 3 tools used
       </>
     ),
     time: "Yesterday, 4:02 PM",
@@ -154,7 +154,7 @@ const ACTIVITY_FEED = [
     bg: "bg-amber-50",
     text: (
       <>
-        Reached <strong>Challenger</strong> rank — 2,500 XP milestone!
+        Reached <strong>Challenger</strong> rank - 2,500 XP milestone!
       </>
     ),
     time: "Mar 15, 7:00 AM",
@@ -183,7 +183,7 @@ export function StudentHome() {
       sidebarSections={STUDENT_HOME_SIDEBAR_SECTIONS}
       sidebarCta={{ label: "Upgrade to Pro", href: "/upgrade" }}
     >
-      {/* Sidebar profile block — injected via a portal-like approach using CSS order */}
+      {/* Sidebar profile block - injected via a portal-like approach using CSS order */}
       <div className="px-7 py-7">
         {/* ── Greeting ── */}
         <div className="mb-6">
@@ -459,7 +459,7 @@ export function StudentHome() {
   )
 }
 
-// Sidebar profile card — rendered inside the sidebar via AppLayout's sidebarSections
+// Sidebar profile card - rendered inside the sidebar via AppLayout's sidebarSections
 // The avatar + name block is a design-only element on this page; the generic Sidebar
 // handles navigation. The full profile block will be a future enhancement.
 
@@ -495,5 +495,5 @@ function _SidebarProfileBlock({
   )
 }
 
-// Suppress unused warning — will be wired into a custom sidebar variant later
+// Suppress unused warning - will be wired into a custom sidebar variant later
 void _SidebarProfileBlock

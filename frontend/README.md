@@ -1,4 +1,4 @@
-# Hatchloom Frontend — LaunchPad UI
+# Hatchloom Frontend - LaunchPad UI
 
 The frontend is a single-page application serving the **LaunchPad** sub-product of the Hatchloom platform. It lets students manage Sandboxes (idea workspaces), SideHustles (real ventures), and the tools, teams, and business model canvases that belong to them.
 
@@ -29,7 +29,7 @@ React 19 with the new React Compiler is used. The compiler handles memoisation a
 
 ### React Query (TanStack Query v5) for server state
 
-All data fetched from the backend lives in React Query's cache — not in component state or a global store. This gives automatic background refresh, loading/error states, and cache invalidation on mutation with zero boilerplate. There is no Redux or Zustand; the server and UI state layers are cleanly separated.
+All data fetched from the backend lives in React Query's cache - not in component state or a global store. This gives automatic background refresh, loading/error states, and cache invalidation on mutation with zero boilerplate. There is no Redux or Zustand; the server and UI state layers are cleanly separated.
 
 ### React Router v7
 
@@ -37,7 +37,7 @@ File-based-style route declarations in a single `App.tsx`. The ToolPage uses an 
 
 ### shadcn/ui (unstyled components) + Tailwind CSS v4
 
-shadcn/ui provides accessible, unstyled primitive components (Dialog, Select, Tooltip, etc.) that are owned directly in `src/components/ui/`. Tailwind CSS v4 (via the Vite plugin) handles all styling. There is no `tailwind.config.js` — configuration lives entirely in `index.css` via CSS custom properties and `@theme`.
+shadcn/ui provides accessible, unstyled primitive components (Dialog, Select, Tooltip, etc.) that are owned directly in `src/components/ui/`. Tailwind CSS v4 (via the Vite plugin) handles all styling. There is no `tailwind.config.js` - configuration lives entirely in `index.css` via CSS custom properties and `@theme`.
 
 ### Feature-co-located components
 
@@ -110,10 +110,10 @@ The frontend follows a layered architecture. Data flows strictly downward: the b
 │              └───────┬────────┘                         │
 └──────────────────────┼──────────────────────────────────┘
                        │ HTTP (JSON)
-              ┌────────▼────────┐
-              │  LaunchPad API  │
-              │   :8082         │
-              └─────────────────┘
+              ┌────────▼──────────────────────────┐
+              │ Frontend nginx (/api proxy in     │
+              │ Docker) -> LaunchPad API (:8082)  │
+              └───────────────────────────────────┘
 ```
 
 ---
@@ -127,8 +127,8 @@ frontend/src/
 ├── index.css                        # Tailwind + CSS custom properties + keyframes
 │
 ├── pages/                           # One file per route
-│   ├── StudentHome.tsx              # / — landing page
-│   ├── LaunchPadHome.tsx            # /launchpad — overview
+│   ├── StudentHome.tsx              # / - landing page
+│   ├── LaunchPadHome.tsx            # /launchpad - overview
 │   ├── SandboxDetail.tsx            # /launchpad/sandboxes/:sandboxId
 │   ├── SideHustleDetail.tsx         # /launchpad/sidehustles/:sideHustleId
 │   └── ToolPage.tsx                 # /launchpad/sandboxes/:sandboxId/tools/:toolType
@@ -191,13 +191,13 @@ frontend/src/
 
 Five routes are declared in [`App.tsx`](src/App.tsx) using React Router v7's `BrowserRouter`:
 
-| Path | Component | Description |
-| ---- | --------- | ----------- |
-| `/` | `StudentHome` | Landing page — XP, rank, banners, activity |
-| `/launchpad` | `LaunchPadHome` | Sandbox + SideHustle tiles, tool discovery |
-| `/launchpad/sandboxes/:sandboxId` | `SandboxDetail` | Full sandbox workspace |
-| `/launchpad/sidehustles/:sideHustleId` | `SideHustleDetail` | Venture management |
-| `/launchpad/sandboxes/:sandboxId/tools/:toolType` | `ToolPage` | Full-screen tool editor overlay |
+| Path                                              | Component          | Description                                |
+| ------------------------------------------------- | ------------------ | ------------------------------------------ |
+| `/`                                               | `StudentHome`      | Landing page - XP, rank, banners, activity |
+| `/launchpad`                                      | `LaunchPadHome`    | Sandbox + SideHustle tiles, tool discovery |
+| `/launchpad/sandboxes/:sandboxId`                 | `SandboxDetail`    | Full sandbox workspace                     |
+| `/launchpad/sidehustles/:sideHustleId`            | `SideHustleDetail` | Venture management                         |
+| `/launchpad/sandboxes/:sandboxId/tools/:toolType` | `ToolPage`         | Full-screen tool editor overlay            |
 
 `ToolPage` is rendered as an animated overlay panel (fixed inset, dark backdrop) on top of `SandboxDetail`. Navigating to a tool URL deep-links directly into the editor without needing to visit the sandbox first.
 
@@ -232,7 +232,7 @@ ToolPage
 
 Each tool content component:
 
-- Receives the raw `SandboxTool` entity (with `data: string | null` — a JSON blob)
+- Receives the raw `SandboxTool` entity (with `data: string | null` - a JSON blob)
 - Parses `data` safely with `try/catch` fallback to a clean default state
 - Calls `onUnsaved(serialisedData)` on every edit, which triggers a 2-second debounced auto-save in `ToolPage`
 
@@ -240,13 +240,13 @@ Each tool content component:
 
 ```text
 SandboxDetail
-├── Zone 1 — Hero: HeroCard (title, description, edit/delete)
+├── Zone 1 - Hero: HeroCard (title, description, edit/delete)
 ├── Quick Actions bar (Add Note, Add Todo, Set Milestone, Add Resource, Share)
-├── Zone 2 — Working Wall
+├── Zone 2 - Working Wall
 │   ├── ActiveToolsCard  (tool grid → links to ToolPage)
 │   ├── TodoCard
 │   └── CommsCard
-└── Zone 3 — Shelf (horizontal scroll rows)
+└── Zone 3 - Shelf (horizontal scroll rows)
     ├── Tagged Resources
     ├── Active Channels
     └── Recommended for this Project
@@ -315,7 +315,7 @@ A `useRef` holds the latest pending data so the debounced `doSave` always reads 
 
 ### Parallel data fetch (Sandbox Detail)
 
-`useSandbox` fires two queries in parallel via React Query — the sandbox metadata and its tool list — and combines them into a single return value. The page skeletons until both resolve.
+`useSandbox` fires two queries in parallel via React Query - the sandbox metadata and its tool list - and combines them into a single return value. The page skeletons until both resolve.
 
 ```typescript
 // hooks/use-sandbox.ts
@@ -335,13 +335,13 @@ return {
 
 ## 8. State Management
 
-| State type | Where it lives | Why |
-| ---------- | -------------- | --- |
-| Server data (sandboxes, tools, BMC…) | React Query cache | Automatic invalidation, background refresh |
-| Tool editing (unsaved content) | `useRef` + `useState` in `ToolPage` | Ref for debounced saves; state for save indicator |
-| Dialog open/close | `useState` in the page that owns the dialog | Local, no need to hoist |
-| Theme (light/dark) | React Context (`ThemeProvider`) | Needs to span the full component tree |
-| Student profile | React Query (mocked, `staleTime: Infinity`) | Will be replaced by Auth service call |
+| State type                           | Where it lives                              | Why                                               |
+| ------------------------------------ | ------------------------------------------- | ------------------------------------------------- |
+| Server data (sandboxes, tools, BMC…) | React Query cache                           | Automatic invalidation, background refresh        |
+| Tool editing (unsaved content)       | `useRef` + `useState` in `ToolPage`         | Ref for debounced saves; state for save indicator |
+| Dialog open/close                    | `useState` in the page that owns the dialog | Local, no need to hoist                           |
+| Theme (light/dark)                   | React Context (`ThemeProvider`)             | Needs to span the full component tree             |
+| Student profile                      | React Query (mocked, `staleTime: Infinity`) | Will be replaced by Auth service call             |
 
 There is no global state library. The query cache acts as the single source of truth for all server data. All mutations invalidate the relevant query keys on success, so the UI stays in sync automatically.
 
@@ -349,7 +349,7 @@ There is no global state library. The query cache acts as the single source of t
 
 ## 9. API Integration
 
-### `apiFetch` — the only HTTP boundary
+### `apiFetch` - the only HTTP boundary
 
 ```typescript
 // lib/api-client.ts
@@ -370,33 +370,37 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 ```
 
+When running the Docker stack from the repo root, `VITE_API_BASE_URL` is set to `/api`.
+That means browser requests go to `/api/launchpad/...` on the frontend container,
+and nginx proxies them to backend `/launchpad/...`.
+
 ### Query hooks
 
-| Hook | Endpoint(s) | Query key |
-| ---- | ----------- | --------- |
-| `useStudent()` | mocked | `["student"]` |
-| `useLaunchPadHome(studentId)` | `GET /launchpad/home/{studentId}` | `["launchpad-home", studentId]` |
-| `useSandbox(sandboxId)` | `GET /launchpad/sandboxes/{id}` + tools | `["sandbox", id]`, `["sandbox-tools", id]` |
-| `useSideHustle(sideHustleId)` | sideHustle + BMC + team + positions | `["sidehustle", id]`, `["bmc", id]`, `["team", id]`, `["positions", id]` |
+| Hook                          | Endpoint(s)                             | Query key                                                                |
+| ----------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
+| `useStudent()`                | mocked                                  | `["student"]`                                                            |
+| `useLaunchPadHome(studentId)` | `GET /launchpad/home/{studentId}`       | `["launchpad-home", studentId]`                                          |
+| `useSandbox(sandboxId)`       | `GET /launchpad/sandboxes/{id}` + tools | `["sandbox", id]`, `["sandbox-tools", id]`                               |
+| `useSideHustle(sideHustleId)` | sideHustle + BMC + team + positions     | `["sidehustle", id]`, `["bmc", id]`, `["team", id]`, `["positions", id]` |
 
 ### Mutation hooks (all in `use-mutations.ts`)
 
-| Hook | Method + Path | Invalidates |
-| ---- | ------------- | ----------- |
-| `useCreateSandbox()` | `POST /launchpad/sandboxes` | `["launchpad-home", studentId]` |
-| `useUpdateSandbox(id)` | `PUT /launchpad/sandboxes/{id}` | `["sandbox", id]` |
-| `useDeleteSandbox()` | `DELETE /launchpad/sandboxes/{id}` | `["launchpad-home"]`, removes sandbox + tools keys |
-| `useAddTool(sandboxId)` | `POST /launchpad/sandboxes/{id}/tools` | `["sandbox-tools", id]` |
-| `useUpdateTool(sandboxId)` | `PUT /launchpad/sandboxes/{id}/tools/{toolId}` | `["sandbox-tools", id]` |
-| `useDeleteTool(sandboxId)` | `DELETE /launchpad/sandboxes/{id}/tools/{toolId}` | `["sandbox-tools", id]` |
-| `useCreateSideHustle()` | `POST /launchpad/sidehustles` | `["launchpad-home", studentId]` |
-| `useUpdateSideHustle(id)` | `PUT /launchpad/sidehustles/{id}` | `["sidehustle", id]` |
-| `useDeleteSideHustle()` | `DELETE /launchpad/sidehustles/{id}` | `["launchpad-home"]`, removes sidehustle key |
-| `usePatchBMC(id)` | `PATCH /launchpad/sidehustles/{id}/bmc` | `["bmc", id]` |
-| `useAddTeamMember(id)` | `POST /launchpad/sidehustles/{id}/team/members` | `["team", id]` |
-| `useRemoveTeamMember(id)` | `DELETE /…/team/members/{memberId}` | `["team", id]` |
-| `useCreatePosition(id)` | `POST /launchpad/sidehustles/{id}/positions` | `["positions", id]` |
-| `useUpdatePositionStatus()` | `PUT /…/positions/{positionId}/status` | `["positions", sideHustleId]` |
+| Hook                        | Method + Path                                     | Invalidates                                        |
+| --------------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| `useCreateSandbox()`        | `POST /launchpad/sandboxes`                       | `["launchpad-home", studentId]`                    |
+| `useUpdateSandbox(id)`      | `PUT /launchpad/sandboxes/{id}`                   | `["sandbox", id]`                                  |
+| `useDeleteSandbox()`        | `DELETE /launchpad/sandboxes/{id}`                | `["launchpad-home"]`, removes sandbox + tools keys |
+| `useAddTool(sandboxId)`     | `POST /launchpad/sandboxes/{id}/tools`            | `["sandbox-tools", id]`                            |
+| `useUpdateTool(sandboxId)`  | `PUT /launchpad/sandboxes/{id}/tools/{toolId}`    | `["sandbox-tools", id]`                            |
+| `useDeleteTool(sandboxId)`  | `DELETE /launchpad/sandboxes/{id}/tools/{toolId}` | `["sandbox-tools", id]`                            |
+| `useCreateSideHustle()`     | `POST /launchpad/sidehustles`                     | `["launchpad-home", studentId]`                    |
+| `useUpdateSideHustle(id)`   | `PUT /launchpad/sidehustles/{id}`                 | `["sidehustle", id]`                               |
+| `useDeleteSideHustle()`     | `DELETE /launchpad/sidehustles/{id}`              | `["launchpad-home"]`, removes sidehustle key       |
+| `usePatchBMC(id)`           | `PATCH /launchpad/sidehustles/{id}/bmc`           | `["bmc", id]`                                      |
+| `useAddTeamMember(id)`      | `POST /launchpad/sidehustles/{id}/team/members`   | `["team", id]`                                     |
+| `useRemoveTeamMember(id)`   | `DELETE /…/team/members/{memberId}`               | `["team", id]`                                     |
+| `useCreatePosition(id)`     | `POST /launchpad/sidehustles/{id}/positions`      | `["positions", id]`                                |
+| `useUpdatePositionStatus()` | `PUT /…/positions/{positionId}/status`            | `["positions", sideHustleId]`                      |
 
 ---
 
@@ -407,10 +411,10 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 All design tokens are defined as CSS variables in `index.css` inside a `@theme` block:
 
 ```css
---hatch-pink:      oklch(0.55 0.26 15);   /* primary brand */
---hatch-orange:    oklch(0.65 0.19 45);   /* accent */
---hatch-charcoal:  oklch(0.17 0.02 270);  /* dark text */
---sandbox-green:   oklch(0.55 0.15 160);  /* sandbox highlight */
+--hatch-pink: oklch(0.55 0.26 15); /* primary brand */
+--hatch-orange: oklch(0.65 0.19 45); /* accent */
+--hatch-charcoal: oklch(0.17 0.02 270); /* dark text */
+--sandbox-green: oklch(0.55 0.15 160); /* sandbox highlight */
 --sidehustle-amber: ...;
 ```
 
@@ -444,7 +448,7 @@ npm ci
 npm run dev          # dev server at http://localhost:5173
 ```
 
-The dev server proxies nothing — it expects the LaunchPad backend running at `http://localhost:8082` (set in `.env.local`).
+The dev server proxies nothing - it expects the LaunchPad backend running at `http://localhost:8082` (set in `.env.local`).
 
 ```bash
 # .env.local
@@ -468,30 +472,32 @@ npm run preview      # serve the built dist/
 The frontend uses a two-stage Docker build:
 
 ```dockerfile
-# Stage 1 — build
+# Stage 1 - build
 FROM node:22-alpine AS builder
 ARG VITE_API_BASE_URL=http://localhost:8082
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm ci && npm run build
 
-# Stage 2 — serve
+# Stage 2 - serve
 FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 ```
 
-`VITE_API_BASE_URL` **must** be passed as a build argument — it is baked into the JavaScript bundle at build time by Vite. `.env*` files are excluded from the Docker build context by `.dockerignore`.
+`VITE_API_BASE_URL` **must** be passed as a build argument - it is baked into the JavaScript bundle at build time by Vite. `.env*` files are excluded from the Docker build context by `.dockerignore`.
 
 Nginx is configured with a React Router SPA fallback (`try_files $uri /index.html`) and long-lived cache headers for Vite's content-hashed `/assets/` files.
 
 **Via docker compose (recommended for full stack):**
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
 ```
 
-| Service | Host port | Notes |
-| ------- | --------- | ----- |
-| `frontend` | 4173 | nginx serving built SPA |
-| `launchpad` | 8082 | Spring Boot backend |
-| `postgres` | 5432 | PostgreSQL 16 |
+This dev workflow enables `SPRING_PROFILES_ACTIVE=dev` for the backend, so local development does not require an external Auth service.
+
+| Service     | Host port | Notes                   |
+| ----------- | --------- | ----------------------- |
+| `frontend`  | 4173      | nginx serving built SPA |
+| `launchpad` | 8082      | Spring Boot backend     |
+| `postgres`  | 5432      | PostgreSQL 16           |

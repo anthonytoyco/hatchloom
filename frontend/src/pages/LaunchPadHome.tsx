@@ -81,7 +81,7 @@ export function LaunchPadHome() {
             My <span className="text-hatch-orange">Launchpad</span> 🚀
           </h1>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Where ideas become real — nurture your Sandboxes, grow your
+            Where ideas become real - nurture your Sandboxes, grow your
             SideHustles.
           </p>
         </div>

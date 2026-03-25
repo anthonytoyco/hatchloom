@@ -1,4 +1,4 @@
-# Hatchloom Backend — LaunchPad Service
+# Hatchloom Backend - LaunchPad Service
 
 The LaunchPad Service is a Spring Boot REST API that manages a student's entrepreneurial workspace. It owns Sandboxes (idea labs), SideHustles (real ventures), the tools attached to sandboxes, Business Model Canvases, Teams, and Positions. It is one service in the broader Hatchloom platform.
 
@@ -25,7 +25,7 @@ The LaunchPad Service is a Spring Boot REST API that manages a student's entrepr
 
 ### Spring Boot 4 + Java 21
 
-Java 21 virtual threads (Project Loom) are available and the framework is Spring Boot 4. The service is a standard MVC application — controllers receive HTTP, delegate to services, services call repositories. No reactive stack is used; the domain logic is straightforward CRUD with a few state machines.
+Java 21 virtual threads (Project Loom) are available and the framework is Spring Boot 4. The service is a standard MVC application - controllers receive HTTP, delegate to services, services call repositories. No reactive stack is used; the domain logic is straightforward CRUD with a few state machines.
 
 ### Flyway owns the schema, Hibernate only validates
 
@@ -33,7 +33,7 @@ Java 21 virtual threads (Project Loom) are available and the framework is Spring
 
 ### Stateless JWT security
 
-The service is a pure OAuth2 Resource Server — it validates tokens but never issues them. Every protected endpoint reads the `sub` claim from the Bearer JWT to identify the caller. The Auth service (external) is the sole token issuer. Sessions are disabled.
+The service is a pure OAuth2 Resource Server - it validates tokens but never issues them. Every protected endpoint reads the `sub` claim from the Bearer JWT to identify the caller. The Auth service (external) is the sole token issuer. Sessions are disabled.
 
 ### Ownership validation in the service layer
 
@@ -41,7 +41,7 @@ Resource ownership (e.g. "does this student own this SideHustle?") is checked in
 
 ### State pattern for Position lifecycle
 
-A `Position` moves through a strict lifecycle: `OPEN → FILLED` or `OPEN → CLOSED`. FILLED and CLOSED are terminal. This is modelled with the **State** pattern — each status has a concrete state class that either permits or rejects the requested transition, throwing `IllegalStateException` for illegal moves.
+A `Position` moves through a strict lifecycle: `OPEN → FILLED` or `OPEN → CLOSED`. FILLED and CLOSED are terminal. This is modelled with the **State** pattern - each status has a concrete state class that either permits or rejects the requested transition, throwing `IllegalStateException` for illegal moves.
 
 ### Factory pattern for SideHustle creation
 
@@ -49,7 +49,7 @@ A `SideHustle` can be created as `IN_THE_LAB` or `LIVE_VENTURE`. The **Factory**
 
 ### Facade pattern for home aggregation
 
-`LaunchPadAggregator` is a Facade — a single component that assembles the home-page view by calling `SandboxService` and `SideHustleService` and computing counts. Controllers stay thin; they call the aggregator rather than orchestrating multiple services themselves.
+`LaunchPadAggregator` is a Facade - a single component that assembles the home-page view by calling `SandboxService` and `SideHustleService` and computing counts. Controllers stay thin; they call the aggregator rather than orchestrating multiple services themselves.
 
 ---
 
@@ -57,8 +57,8 @@ A `SideHustle` can be created as `IN_THE_LAB` or `LIVE_VENTURE`. The **Factory**
 
 The LaunchPad Service sits behind an API Gateway and integrates with two external services:
 
-- **Auth Service** — issues JWTs; LaunchPad validates signatures against the Auth issuer URI.
-- **ConnectHub Service** — consumes the public `GET /launchpad/positions/{positionId}/status` endpoint to display open positions in its classifieds feed.
+- **Auth Service** - issues JWTs; LaunchPad validates signatures against the Auth issuer URI.
+- **ConnectHub Service** - consumes the public `GET /launchpad/positions/{positionId}/status` endpoint to display open positions in its classifieds feed.
 
 ```plantuml
 @startuml component_overview
@@ -157,14 +157,14 @@ ConnectHub --> PositionStatusInterface : consumed by classifieds
 
 ### Layer responsibilities
 
-| Layer | Responsibility |
-| ----- | -------------- |
-| **Controller** | HTTP binding only — parse path/body, call service or aggregator, return response DTO |
-| **Service** | Business logic — ownership validation, state transitions, factory dispatch, persistence |
-| **Aggregator** | Read-only facade — compose multi-service views without adding persistence |
-| **Repository** | Data access — extends `JpaRepository`, custom queries for ownership lookups |
-| **Factory** | Object creation — encapsulate SideHustle subtype construction |
-| **State** | Lifecycle enforcement — model valid Position status transitions |
+| Layer          | Responsibility                                                                          |
+| -------------- | --------------------------------------------------------------------------------------- |
+| **Controller** | HTTP binding only - parse path/body, call service or aggregator, return response DTO    |
+| **Service**    | Business logic - ownership validation, state transitions, factory dispatch, persistence |
+| **Aggregator** | Read-only facade - compose multi-service views without adding persistence               |
+| **Repository** | Data access - extends `JpaRepository`, custom queries for ownership lookups             |
+| **Factory**    | Object creation - encapsulate SideHustle subtype construction                           |
+| **State**      | Lifecycle enforcement - model valid Position status transitions                         |
 
 ---
 
@@ -263,9 +263,9 @@ Position --> PositionStatus
 ### Key domain rules
 
 - A `Sandbox` is a student's experimental workspace. It holds many `SandboxTool` records, each storing a JSON blob of tool-specific content.
-- A `SideHustle` can optionally reference a parent `Sandbox` (the idea it grew from). If that Sandbox is deleted, `side_hustles.sandbox_id` is set to `NULL` — the venture survives.
+- A `SideHustle` can optionally reference a parent `Sandbox` (the idea it grew from). If that Sandbox is deleted, `side_hustles.sandbox_id` is set to `NULL` - the venture survives.
 - Every `SideHustle` always has exactly one `BusinessModelCanvas` and one `Team`, both auto-created at creation time with all fields null/empty.
-- `Position.hasOpenPositions` on `SideHustle` is a denormalised flag maintained by `PositionService` — set to `true` on position creation, recalculated after every status update.
+- `Position.hasOpenPositions` on `SideHustle` is a denormalised flag maintained by `PositionService` - set to `true` on position creation, recalculated after every status update.
 - `PositionStatus` transitions are strictly one-way: `OPEN → FILLED` or `OPEN → CLOSED`. `FILLED` and `CLOSED` are terminal.
 
 ---
@@ -286,7 +286,7 @@ com.hatchloom.launchpad/
 ├── config/
 │   └── SecurityConfig.java          # OAuth2 resource server + public endpoint list
 │
-├── controller/                      # HTTP layer — one controller per resource
+├── controller/                      # HTTP layer - one controller per resource
 │   ├── LaunchPadHomeController.java
 │   ├── SandboxController.java
 │   ├── SandboxToolController.java
@@ -339,8 +339,8 @@ com.hatchloom.launchpad/
     ├── PositionState.java           # Interface: transitionToFilled(), transitionToClosed()
     ├── PositionStateContext.java    # Spring bean: resolves state, executes transition
     ├── OpenState.java               # Allows both transitions
-    ├── FilledState.java             # Terminal — rejects all transitions
-    └── ClosedState.java             # Terminal — rejects all transitions
+    ├── FilledState.java             # Terminal - rejects all transitions
+    └── ClosedState.java             # Terminal - rejects all transitions
 ```
 
 ---
@@ -351,81 +351,81 @@ All endpoints require a valid `Authorization: Bearer <JWT>` header unless marked
 
 ### Home
 
-| Method | Path | Auth | Response |
-| ------ | ---- | ---- | -------- |
-| `GET` | `/launchpad/home/{userId}` | JWT | `LaunchPadHomeView` — sandbox + sideHustle counts and summaries |
+| Method | Path                       | Auth | Response                                                        |
+| ------ | -------------------------- | ---- | --------------------------------------------------------------- |
+| `GET`  | `/launchpad/home/{userId}` | JWT  | `LaunchPadHomeView` - sandbox + sideHustle counts and summaries |
 
 ### Sandboxes
 
-| Method | Path | Auth | Body | Response |
-| ------ | ---- | ---- | ---- | -------- |
-| `POST` | `/launchpad/sandboxes` | JWT | `CreateSandboxRequest` | `201 SandboxResponse` |
-| `GET` | `/launchpad/sandboxes/{sandboxId}` | JWT | — | `SandboxResponse` |
-| `PUT` | `/launchpad/sandboxes/{sandboxId}` | JWT | `UpdateSandboxRequest` | `SandboxResponse` |
-| `DELETE` | `/launchpad/sandboxes/{sandboxId}` | JWT | — | `204` |
-| `GET` | `/launchpad/sandboxes?studentId=` | JWT | — | `List<SandboxResponse>` |
+| Method   | Path                               | Auth | Body                   | Response                |
+| -------- | ---------------------------------- | ---- | ---------------------- | ----------------------- |
+| `POST`   | `/launchpad/sandboxes`             | JWT  | `CreateSandboxRequest` | `201 SandboxResponse`   |
+| `GET`    | `/launchpad/sandboxes/{sandboxId}` | JWT  | -                      | `SandboxResponse`       |
+| `PUT`    | `/launchpad/sandboxes/{sandboxId}` | JWT  | `UpdateSandboxRequest` | `SandboxResponse`       |
+| `DELETE` | `/launchpad/sandboxes/{sandboxId}` | JWT  | -                      | `204`                   |
+| `GET`    | `/launchpad/sandboxes?studentId=`  | JWT  | -                      | `List<SandboxResponse>` |
 
 ### Sandbox Tools
 
-| Method | Path | Auth | Body | Response |
-| ------ | ---- | ---- | ---- | -------- |
-| `POST` | `/launchpad/sandboxes/{sandboxId}/tools` | JWT | `CreateSandboxToolRequest` | `201 SandboxToolResponse` |
-| `GET` | `/launchpad/sandboxes/{sandboxId}/tools` | JWT | — | `List<SandboxToolResponse>` |
-| `PUT` | `/launchpad/sandboxes/{sandboxId}/tools/{toolId}` | JWT | `UpdateSandboxToolRequest` | `SandboxToolResponse` |
-| `DELETE` | `/launchpad/sandboxes/{sandboxId}/tools/{toolId}` | JWT | — | `204` |
+| Method   | Path                                              | Auth | Body                       | Response                    |
+| -------- | ------------------------------------------------- | ---- | -------------------------- | --------------------------- |
+| `POST`   | `/launchpad/sandboxes/{sandboxId}/tools`          | JWT  | `CreateSandboxToolRequest` | `201 SandboxToolResponse`   |
+| `GET`    | `/launchpad/sandboxes/{sandboxId}/tools`          | JWT  | -                          | `List<SandboxToolResponse>` |
+| `PUT`    | `/launchpad/sandboxes/{sandboxId}/tools/{toolId}` | JWT  | `UpdateSandboxToolRequest` | `SandboxToolResponse`       |
+| `DELETE` | `/launchpad/sandboxes/{sandboxId}/tools/{toolId}` | JWT  | -                          | `204`                       |
 
 ### SideHustles
 
-| Method | Path | Auth | Body | Response |
-| ------ | ---- | ---- | ---- | -------- |
-| `POST` | `/launchpad/sidehustles` | JWT | `CreateSideHustleRequest` | `201 SideHustleResponse` |
-| `GET` | `/launchpad/sidehustles/{sideHustleId}` | JWT | — | `SideHustleResponse` |
-| `PUT` | `/launchpad/sidehustles/{sideHustleId}` | JWT | `UpdateSideHustleRequest` | `SideHustleResponse` |
-| `DELETE` | `/launchpad/sidehustles/{sideHustleId}` | JWT | — | `204` |
-| `GET` | `/launchpad/sidehustles?studentId=` | JWT | — | `List<SideHustleResponse>` |
+| Method   | Path                                    | Auth | Body                      | Response                   |
+| -------- | --------------------------------------- | ---- | ------------------------- | -------------------------- |
+| `POST`   | `/launchpad/sidehustles`                | JWT  | `CreateSideHustleRequest` | `201 SideHustleResponse`   |
+| `GET`    | `/launchpad/sidehustles/{sideHustleId}` | JWT  | -                         | `SideHustleResponse`       |
+| `PUT`    | `/launchpad/sidehustles/{sideHustleId}` | JWT  | `UpdateSideHustleRequest` | `SideHustleResponse`       |
+| `DELETE` | `/launchpad/sidehustles/{sideHustleId}` | JWT  | -                         | `204`                      |
+| `GET`    | `/launchpad/sidehustles?studentId=`     | JWT  | -                         | `List<SideHustleResponse>` |
 
 ### Positions
 
-| Method | Path | Auth | Body | Response | Notes |
-| ------ | ---- | ---- | ---- | -------- | ----- |
-| `POST` | `/launchpad/sidehustles/{id}/positions` | JWT | `CreatePositionRequest` | `201 PositionResponse` | Sets `hasOpenPositions=true` |
-| `GET` | `/launchpad/sidehustles/{id}/positions` | JWT | — | `List<PositionResponse>` | |
-| `PUT` | `/launchpad/sidehustles/{id}/positions/{positionId}/status` | JWT | `UpdatePositionStatusRequest` | `PositionResponse` | State machine enforced |
-| `GET` | `/launchpad/positions/{positionId}/status` | **Public** | — | `"OPEN"` / `"FILLED"` / `"CLOSED"` | Position Status Interface |
+| Method | Path                                                        | Auth       | Body                          | Response                           | Notes                        |
+| ------ | ----------------------------------------------------------- | ---------- | ----------------------------- | ---------------------------------- | ---------------------------- |
+| `POST` | `/launchpad/sidehustles/{id}/positions`                     | JWT        | `CreatePositionRequest`       | `201 PositionResponse`             | Sets `hasOpenPositions=true` |
+| `GET`  | `/launchpad/sidehustles/{id}/positions`                     | JWT        | -                             | `List<PositionResponse>`           |                              |
+| `PUT`  | `/launchpad/sidehustles/{id}/positions/{positionId}/status` | JWT        | `UpdatePositionStatusRequest` | `PositionResponse`                 | State machine enforced       |
+| `GET`  | `/launchpad/positions/{positionId}/status`                  | **Public** | -                             | `"OPEN"` / `"FILLED"` / `"CLOSED"` | Position Status Interface    |
 
 ### Business Model Canvas
 
-| Method | Path | Auth | Body | Response |
-| ------ | ---- | ---- | ---- | -------- |
-| `GET` | `/launchpad/sidehustles/{id}/bmc` | JWT | — | `BMCResponse` (all 9 sections) |
-| `PATCH` | `/launchpad/sidehustles/{id}/bmc` | JWT | `EditBMCRequest` | `BMCResponse` |
+| Method  | Path                              | Auth | Body             | Response                       |
+| ------- | --------------------------------- | ---- | ---------------- | ------------------------------ |
+| `GET`   | `/launchpad/sidehustles/{id}/bmc` | JWT  | -                | `BMCResponse` (all 9 sections) |
+| `PATCH` | `/launchpad/sidehustles/{id}/bmc` | JWT  | `EditBMCRequest` | `BMCResponse`                  |
 
 ### Team
 
-| Method | Path | Auth | Body | Response |
-| ------ | ---- | ---- | ---- | -------- |
-| `POST` | `/launchpad/sidehustles/{id}/team/members` | JWT | `AddTeamMemberRequest` | `201 TeamMemberResponse` |
-| `GET` | `/launchpad/sidehustles/{id}/team/members` | JWT | — | `List<TeamMemberResponse>` |
-| `DELETE` | `/launchpad/sidehustles/{id}/team/members/{userId}` | JWT | — | `204` |
+| Method   | Path                                                | Auth | Body                   | Response                   |
+| -------- | --------------------------------------------------- | ---- | ---------------------- | -------------------------- |
+| `POST`   | `/launchpad/sidehustles/{id}/team/members`          | JWT  | `AddTeamMemberRequest` | `201 TeamMemberResponse`   |
+| `GET`    | `/launchpad/sidehustles/{id}/team/members`          | JWT  | -                      | `List<TeamMemberResponse>` |
+| `DELETE` | `/launchpad/sidehustles/{id}/team/members/{userId}` | JWT  | -                      | `204`                      |
 
 ### HTTP status codes
 
-| Code | Meaning |
-| ---- | ------- |
-| `200` | Successful GET / PUT / PATCH |
-| `201` | Successful POST (resource created) |
-| `204` | Successful DELETE |
-| `400` | Invalid request body (bad section key, missing sandboxId, etc.) |
-| `401` | Missing or invalid JWT |
-| `403` | Caller does not own the resource |
+| Code  | Meaning                                                          |
+| ----- | ---------------------------------------------------------------- |
+| `200` | Successful GET / PUT / PATCH                                     |
+| `201` | Successful POST (resource created)                               |
+| `204` | Successful DELETE                                                |
+| `400` | Invalid request body (bad section key, missing sandboxId, etc.)  |
+| `401` | Missing or invalid JWT                                           |
+| `403` | Caller does not own the resource                                 |
 | `404` | Resource not found, or child does not belong to specified parent |
-| `409` | Duplicate team membership |
+| `409` | Duplicate team membership                                        |
 
 ---
 
 ## 7. Design Patterns
 
-### Facade — `LaunchPadAggregator`
+### Facade - `LaunchPadAggregator`
 
 Composes the LaunchPad home view by calling `SandboxService.listByStudent()` and `SideHustleService.listByStudent()` and computing counts. Controllers remain thin and never orchestrate multiple services directly.
 
@@ -441,7 +441,7 @@ LaunchPadAggregator.getHomeView(studentId)
                                               + liveVenturesCount
 ```
 
-### Factory — `SideHustleFactoryProvider`
+### Factory - `SideHustleFactoryProvider`
 
 Decouples SideHustle creation logic from the service. `SideHustleService` asks the provider for the right factory, then calls `createSideHustle(...)`.
 
@@ -459,7 +459,7 @@ After factory creates entity:
   → auto-create empty Team
 ```
 
-### State — `PositionStateContext`
+### State - `PositionStateContext`
 
 Enforces the `Position` lifecycle. `PositionService` passes the current status to the context, which resolves the appropriate state object and delegates the transition request. Terminal states throw `IllegalStateException`.
 
@@ -544,19 +544,19 @@ if (!sh.getStudentId().equals(callerId)) {
 
 ## 9. Database & Migrations
 
-Flyway manages all schema changes. Migration files live in `src/main/resources/db/migration` and are applied in version order on startup. Hibernate runs in `validate` mode — it checks that the entity mappings match the current schema but never alters it.
+Flyway manages all schema changes. Migration files live in `src/main/resources/db/migration` and are applied in version order on startup. Hibernate runs in `validate` mode - it checks that the entity mappings match the current schema but never alters it.
 
 ### Tables
 
-| Table | Entity | Key columns |
-| ----- | ------ | ----------- |
-| `sandboxes` | `Sandbox` | `id`, `student_id`, `title`, `description` |
-| `sandbox_tools` | `SandboxTool` | `id`, `sandbox_id (FK)`, `tool_type`, `data (TEXT)` |
-| `side_hustles` | `SideHustle` | `id`, `sandbox_id (FK, nullable)`, `student_id`, `status`, `has_open_positions` |
-| `bmc_sections` | `BusinessModelCanvas` | `id`, `side_hustle_id (FK, unique)`, 9 TEXT section columns |
-| `teams` | `Team` | `id`, `side_hustle_id (FK, unique)` |
-| `team_members` | `TeamMember` | `id`, `team_id (FK)`, `student_id`, `role`; unique on `(team_id, student_id)` |
-| `positions` | `Position` | `id`, `side_hustle_id (FK)`, `title`, `status` |
+| Table           | Entity                | Key columns                                                                     |
+| --------------- | --------------------- | ------------------------------------------------------------------------------- |
+| `sandboxes`     | `Sandbox`             | `id`, `student_id`, `title`, `description`                                      |
+| `sandbox_tools` | `SandboxTool`         | `id`, `sandbox_id (FK)`, `tool_type`, `data (TEXT)`                             |
+| `side_hustles`  | `SideHustle`          | `id`, `sandbox_id (FK, nullable)`, `student_id`, `status`, `has_open_positions` |
+| `bmc_sections`  | `BusinessModelCanvas` | `id`, `side_hustle_id (FK, unique)`, 9 TEXT section columns                     |
+| `teams`         | `Team`                | `id`, `side_hustle_id (FK, unique)`                                             |
+| `team_members`  | `TeamMember`          | `id`, `team_id (FK)`, `student_id`, `role`; unique on `(team_id, student_id)`   |
+| `positions`     | `Position`            | `id`, `side_hustle_id (FK)`, `title`, `status`                                  |
 
 ### Cascade rules
 
@@ -612,7 +612,7 @@ The one truly public endpoint in the service. ConnectHub calls it to determine w
 ```text
 GET /launchpad/positions/{positionId}/status
 Authorization: none required
-Response: plain text — "OPEN", "FILLED", or "CLOSED"
+Response: plain text - "OPEN", "FILLED", or "CLOSED"
 ```
 
 This endpoint is explicitly listed as `permitAll()` in `SecurityConfig` and is documented in the component diagram as the **Position Status Interface**.
@@ -669,17 +669,25 @@ COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
-**Via docker compose (recommended for full stack):**
+**Via docker compose (recommended for local development):**
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
 ```
 
-| Service | Internal port | Host port | Notes |
-| ------- | ------------- | --------- | ----- |
-| `launchpad` | 8080 | 8082 | Spring Boot |
-| `postgres` | 5432 | 5432 | PostgreSQL 16 |
-| `frontend` | 80 | 4173 | nginx SPA |
+This uses the dev override file to set `SPRING_PROFILES_ACTIVE=dev`, so JWT-protected endpoints can be exercised locally without an external Auth service.
+
+If you intentionally want normal JWT validation behavior, run only the base compose file:
+
+```bash
+docker compose -f docker-compose.yaml up --build
+```
+
+| Service     | Internal port | Host port | Notes         |
+| ----------- | ------------- | --------- | ------------- |
+| `launchpad` | 8080          | 8082      | Spring Boot   |
+| `postgres`  | 5432          | 5432      | PostgreSQL 16 |
+| `frontend`  | 80            | 4173      | nginx SPA     |
 
 Environment variables injected by compose:
 
@@ -690,4 +698,4 @@ SPRING_DATASOURCE_PASSWORD launchpad_pass
 SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI http://auth:8081
 ```
 
-The Auth service is external and is not defined in the compose file. JWT validation will fail gracefully if the Auth service is unreachable — only the public `GET /launchpad/positions/{id}/status` endpoint remains accessible without a token.
+The Auth service is external and is not defined in the base compose file. If you run without the dev override and Auth is unreachable, JWT validation will fail - only the public `GET /launchpad/positions/{id}/status` endpoint remains accessible without a token.

@@ -65,17 +65,14 @@ export function SandboxDetail() {
             Launchpad
           </Link>
           <ChevronRight className="size-3 text-border" />
-          <Link
-            to="/launchpad"
-            className="text-hatch-pink hover:underline"
-          >
+          <Link to="/launchpad" className="text-hatch-pink hover:underline">
             My Sandboxes
           </Link>
           <ChevronRight className="size-3 text-border" />
           <span>♻️ {sandbox?.title ?? "…"}</span>
         </nav>
 
-        {/* Zone 1 — Hero */}
+        {/* Zone 1 - Hero */}
         {isLoading ? (
           <SkeletonCard className="mb-4 h-[340px]" />
         ) : sandbox ? (
@@ -109,7 +106,7 @@ export function SandboxDetail() {
           ))}
         </div>
 
-        {/* Zone 2 — Working Wall */}
+        {/* Zone 2 - Working Wall */}
 
         {/* Active Tools */}
         {isLoading ? (
@@ -139,7 +136,7 @@ export function SandboxDetail() {
           )}
         </div>
 
-        {/* Zone 3 — Shelf */}
+        {/* Zone 3 - Shelf */}
         <div className="animate-[fadeUp_0.4s_ease_0.28s_both]">
           <ShelfRow title="📌 Tagged Resources" action="See all →">
             {TAGGED_RESOURCES.map((r) => (

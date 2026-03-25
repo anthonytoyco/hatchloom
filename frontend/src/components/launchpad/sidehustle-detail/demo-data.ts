@@ -208,7 +208,7 @@ export const MESSAGES: Message[] = [
     grad: "from-cyan-600 to-cyan-400",
     sender: "Barry",
     isAI: true,
-    text: "Nice market day! I've updated your numbers — check your Running tiles.",
+    text: "Nice market day! I've updated your numbers - check your Running tiles.",
     time: "4h",
     unread: true,
   },
@@ -229,7 +229,7 @@ export const EMAILS: Message[] = [
     emoji: "🏫",
     grad: "from-blue-500 to-blue-400",
     sender: "Ridgewood Parent Council",
-    text: "RE: Bake sale booth — interested in your butter for March 8.",
+    text: "RE: Bake sale booth - interested in your butter for March 8.",
     time: "2d",
   },
 ]

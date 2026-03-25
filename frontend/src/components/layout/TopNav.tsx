@@ -30,7 +30,7 @@ export function TopNav({ student }: TopNavProps) {
 
   return (
     <header className="sticky top-0 z-50 flex h-[58px] items-center justify-between border-b border-border bg-card px-7 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-      {/* Left — logo + context */}
+      {/* Left - logo + context */}
       <div className="flex items-center gap-2.5">
         <span className="font-heading text-[1.35rem] font-black tracking-tight text-hatch-charcoal">
           hatch<span className="text-hatch-pink">loom</span>
@@ -46,7 +46,7 @@ export function TopNav({ student }: TopNavProps) {
         </span>
       </div>
 
-      {/* Center — nav links */}
+      {/* Center - nav links */}
       <nav className="flex items-center gap-0.5">
         {NAV_ITEMS.map((item) => (
           <NavLink
@@ -66,7 +66,7 @@ export function TopNav({ student }: TopNavProps) {
         ))}
       </nav>
 
-      {/* Right — gamification + avatar */}
+      {/* Right - gamification + avatar */}
       <div className="flex items-center gap-2.5">
         {/* Streak pill */}
         <Tooltip>

@@ -113,10 +113,7 @@ export function ToolPage() {
             🚀 LaunchPad
           </Link>
           <ChevronRight className="size-3 text-border" />
-          <Link
-            to="/launchpad"
-            className="text-hatch-pink hover:underline"
-          >
+          <Link to="/launchpad" className="text-hatch-pink hover:underline">
             My Sandboxes
           </Link>
           <ChevronRight className="size-3 text-border" />
