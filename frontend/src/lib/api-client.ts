@@ -15,6 +15,42 @@ export async function apiFetch<T>(
       ...options?.headers,
     },
   })
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
-  return res.json() as T
+
+  if (!res.ok) {
+    const contentType = res.headers.get("content-type") ?? ""
+    let message = `${res.status} ${res.statusText}`
+
+    if (contentType.includes("application/json")) {
+      try {
+        const body = (await res.json()) as { message?: string; error?: string }
+        message = body.message ?? body.error ?? message
+      } catch {
+        // Keep default status-based message when response JSON is malformed.
+      }
+    } else {
+      try {
+        const text = await res.text()
+        if (text.trim()) message = text.trim()
+      } catch {
+        // Keep default status-based message when response text cannot be read.
+      }
+    }
+
+    throw new Error(message)
+  }
+
+  if (res.status === 204) {
+    return undefined as T
+  }
+
+  const contentType = res.headers.get("content-type") ?? ""
+  if (!contentType.includes("application/json")) {
+    const text = await res.text()
+    if (!text.trim()) return undefined as T
+    return text as T
+  }
+
+  const text = await res.text()
+  if (!text.trim()) return undefined as T
+  return JSON.parse(text) as T
 }
