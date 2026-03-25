@@ -133,7 +133,7 @@ export function AddToolDialog({
           {TOOL_META.map((m) => (
             <button
               key={m.type}
-              onClick={() => setSelected(m.type as ToolType)}
+              onClick={() => setSelected(m.type)}
               className={cn(
                 "flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all",
                 selected === m.type

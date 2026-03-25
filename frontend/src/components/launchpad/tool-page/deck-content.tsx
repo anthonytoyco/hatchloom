@@ -16,7 +16,13 @@ export function DeckContent({
   tool: SandboxTool
   onUnsaved: (data: string) => void
 }) {
-  const parsed = JSON.parse(tool.data ?? '{"slides":[]}') as { slides: Slide[] }
+  const parsed = (() => {
+    try {
+      return JSON.parse(tool.data ?? '{"slides":[]}') as { slides: Slide[] }
+    } catch {
+      return { slides: [] as Slide[] }
+    }
+  })()
   const [slides, setSlides] = useState<Slide[]>(parsed.slides)
   const [activeId, setActiveId] = useState(slides[0]?.id ?? "")
   const active = slides.find((s) => s.id === activeId) ?? slides[0]

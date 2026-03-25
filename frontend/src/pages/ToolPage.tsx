@@ -42,8 +42,14 @@ export function ToolPage() {
 
   useEffect(() => {
     pendingDataRef.current = tool?.data ?? ""
-    setSaveState("saved")
   }, [tool?.id, tool?.data])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimer) clearTimeout(saveTimer)
+      if (toastTimer) clearTimeout(toastTimer)
+    }
+  }, [saveTimer, toastTimer])
 
   function showToast(msg: string) {
     if (toastTimer) clearTimeout(toastTimer)
@@ -108,7 +114,7 @@ export function ToolPage() {
           </Link>
           <ChevronRight className="size-3 text-border" />
           <Link
-            to="/launchpad/sandboxes"
+            to="/launchpad"
             className="text-hatch-pink hover:underline"
           >
             My Sandboxes

@@ -1,6 +1,6 @@
-name: launchpad-ci
+name: launchpad-backend-ci
 
-# Run CI for LaunchPad changes on PRs and on pushes to main
+# Run CI for LaunchPad backend changes on PRs and on pushes to main
 on:
   push:
     branches: [main]
@@ -12,7 +12,7 @@ on:
       - backend/.mvn/**
       - backend/Dockerfile
       - compose.yaml
-      - .github/workflows/launchpad-ci.yml
+      - .github/workflows/backend-ci.yml
   pull_request:
     branches: [main]
     paths:
@@ -23,7 +23,7 @@ on:
       - backend/.mvn/**
       - backend/Dockerfile
       - compose.yaml
-      - .github/workflows/launchpad-ci.yml
+      - .github/workflows/backend-ci.yml
 
 jobs:
   # Validate the service against a real Postgres dependency

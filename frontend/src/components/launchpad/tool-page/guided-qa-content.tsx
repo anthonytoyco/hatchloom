@@ -54,10 +54,16 @@ export function GuidedQAContent({
   tool: SandboxTool
   onUnsaved: (data: string) => void
 }) {
-  const parsed = JSON.parse(tool.data ?? '{"currentStep":0,"answers":{}}') as {
-    currentStep: number
-    answers: Record<string, string>
-  }
+  const parsed = (() => {
+    try {
+      return JSON.parse(tool.data ?? '{"currentStep":0,"answers":{}}') as {
+        currentStep: number
+        answers: Record<string, string>
+      }
+    } catch {
+      return { currentStep: 0, answers: {} as Record<string, string> }
+    }
+  })()
   const [currentStep, setCurrentStep] = useState(parsed.currentStep)
   const [answers, setAnswers] = useState<Record<string, string>>(parsed.answers)
 

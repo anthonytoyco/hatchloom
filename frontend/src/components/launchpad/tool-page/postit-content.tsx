@@ -69,9 +69,14 @@ export function PostItContent({
   tool?: SandboxTool
   onUnsaved: (data: string) => void
 }) {
-  const initialNotes: NoteEntry[] = tool?.data
-    ? (JSON.parse(tool.data) as NoteEntry[])
-    : DEMO_NOTES
+  const initialNotes: NoteEntry[] = (() => {
+    if (!tool?.data) return DEMO_NOTES
+    try {
+      return JSON.parse(tool.data) as NoteEntry[]
+    } catch {
+      return DEMO_NOTES
+    }
+  })()
   const [selectedId, setSelectedId] = useState(initialNotes[0]?.id ?? "n1")
   const [notes, setNotes] = useState(initialNotes)
   const selected = notes.find((n) => n.id === selectedId) ?? notes[0]

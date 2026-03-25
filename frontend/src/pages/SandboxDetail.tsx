@@ -66,7 +66,7 @@ export function SandboxDetail() {
           </Link>
           <ChevronRight className="size-3 text-border" />
           <Link
-            to="/launchpad/sandboxes"
+            to="/launchpad"
             className="text-hatch-pink hover:underline"
           >
             My Sandboxes

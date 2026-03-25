@@ -16,9 +16,13 @@ export function ChecklistContent({
   tool: SandboxTool
   onUnsaved: (data: string) => void
 }) {
-  const parsed = JSON.parse(tool.data ?? '{"items":[]}') as {
-    items: CheckItem[]
-  }
+  const parsed = (() => {
+    try {
+      return JSON.parse(tool.data ?? '{"items":[]}') as { items: CheckItem[] }
+    } catch {
+      return { items: [] as CheckItem[] }
+    }
+  })()
   const [items, setItems] = useState<CheckItem[]>(parsed.items)
   const [newText, setNewText] = useState("")
 
