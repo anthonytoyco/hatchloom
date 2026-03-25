@@ -49,7 +49,7 @@ export function SandboxDetail() {
     try {
       await deleteSandbox.mutateAsync(sandboxId)
       void navigate("/launchpad")
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete sandbox")
     }
   }

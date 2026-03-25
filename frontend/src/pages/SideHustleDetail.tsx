@@ -50,7 +50,7 @@ export function SideHustleDetail() {
       setIsDeleting(true)
       await deleteSideHustle.mutateAsync(sideHustleId)
       void navigate("/launchpad")
-    } catch (error) {
+    } catch {
       setIsDeleting(false)
       toast.error("Failed to delete side hustle")
     }
