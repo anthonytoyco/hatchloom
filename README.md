@@ -7,7 +7,7 @@ It exposes one public endpoint (Position Status Interface) consumed by ConnectHu
 ## Prerequisites
 
 - Java 21 (JDK)
-- Apache Maven (or use the included `./mvnw` wrapper)
+- Apache Maven (or use the included `./backend/mvnw` wrapper)
 - Docker and Docker Compose (for containerised runs)
 - A running Auth service at `http://localhost:8081` for JWT validation (protected endpoints only)
 
@@ -17,7 +17,7 @@ Requires a local PostgreSQL instance. Spring Boot Docker Compose integration
 will auto-start the `compose.yaml` Postgres service when you run:
 
 ```bash
-./mvnw spring-boot:run
+cd backend && ./mvnw spring-boot:run
 ```
 
 The service starts on port **8082** (mapped from container port 8080).
@@ -41,13 +41,13 @@ The service will be available at `http://localhost:8082`.
 Unit tests only (no database required):
 
 ```bash
-./mvnw test
+cd backend && ./mvnw test
 ```
 
 Integration tests (requires a running Postgres):
 
 ```bash
-./mvnw test -Dgroups=integration \
+cd backend && ./mvnw test -Dgroups=integration \
   -DSPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/launchpad_db \
   -DSPRING_DATASOURCE_USERNAME=launchpad_user \
   -DSPRING_DATASOURCE_PASSWORD=launchpad_pass

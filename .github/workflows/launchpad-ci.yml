@@ -5,23 +5,23 @@ on:
   push:
     branches: [main]
     paths:
-      - src/**
-      - pom.xml
-      - mvnw
-      - mvnw.cmd
-      - .mvn/**
-      - Dockerfile
+      - backend/src/**
+      - backend/pom.xml
+      - backend/mvnw
+      - backend/mvnw.cmd
+      - backend/.mvn/**
+      - backend/Dockerfile
       - compose.yaml
       - .github/workflows/launchpad-ci.yml
   pull_request:
     branches: [main]
     paths:
-      - src/**
-      - pom.xml
-      - mvnw
-      - mvnw.cmd
-      - .mvn/**
-      - Dockerfile
+      - backend/src/**
+      - backend/pom.xml
+      - backend/mvnw
+      - backend/mvnw.cmd
+      - backend/.mvn/**
+      - backend/Dockerfile
       - compose.yaml
       - .github/workflows/launchpad-ci.yml
 
@@ -64,6 +64,7 @@ jobs:
           cache: maven
 
       - name: Run unit tests
+        working-directory: backend
         run: ./mvnw test
 
       - name: Upload surefire reports
@@ -71,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: launchpad-surefire-reports
-          path: target/surefire-reports/**
+          path: backend/target/surefire-reports/**
 
   # Build and publish image only for pushes to main after tests pass
   build-docker:
@@ -100,9 +101,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          # Build from repository root and publish to GitHub Container Registry with both "latest" and commit SHA tags
-          context: .
-          file: ./Dockerfile
+          # Build from backend/ directory and publish to GitHub Container Registry with both "latest" and commit SHA tags
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/hatchloom-launchpad:latest

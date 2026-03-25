@@ -4,7 +4,7 @@
             "type": "java",
             "name": "Spring Boot-LaunchpadApplication<launchpad>",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/backend",
             "mainClass": "com.hatchloom.launchpad.LaunchpadApplication",
             "projectName": "launchpad",
             "args": "",
